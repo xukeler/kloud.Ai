@@ -1,0 +1,9 @@
+@echo off
+color 2
+reg delete HKCR\lnkfile /v IsShortcut /f
+reg delete HKCR\piffile /v IsShortcut /f
+reg delete HKCR\InternetShortcut /v IsShortcut /f
+taskkill /f /im explorer.exe && explorer
+
+az deployment sub create --template-file "D:\techexcel\bot\my-chat-bot\deploymentTemplates\template-with-new-rg.json" --location "centralus" --parameters appId="c0b2a7e9-d3a4-49b1-8475-8e92bae53cae" appSecret="AtLeastSixteenCharacters_0" botId="az deployment sub create --template-file "D:\techexcel\bot\my-chat-bot\deploymentTemplates\template-with-new-rg.json" --location "centralus" --parameters appId="c0b2a7e9-d3a4-49b1-8475-8e92bae53cae" appSecret="AtLeastSixteenCharacters_0" botId="kloud.Ai" botSku=F0 newAppServicePlanName="kloud.Ai" newWebAppName="kloud.Ai" groupName="kloud.Ai" groupLocation="centralus"  newAppServicePlanLocation="centralus" --name "displayName" botSku=F0 newAppServicePlanName="displayName" newWebAppName="displayName" groupName="displayName" groupLocation="centralus"  newAppServicePlanLocation="centralus" --name "displayName"
+az deployment group create --resource-group "<name-of-resource-group>" --template-file "<path-to-template-with-preexisting-rg.json>" --parameters appId="<app-id-from-previous-step>" appSecret="<password-from-previous-step>" botId="<id or bot-app-service-name>" newWebAppName="<bot-app-service-name>" existingAppServicePlan="<name-of-app-service-plan>" appServicePlanLocation="<region-location-name>" --name "<bot-app-service-name>"
