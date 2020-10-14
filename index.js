@@ -13,7 +13,6 @@ const restify = require('restify');
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
 const { BotFrameworkAdapter } = require('botbuilder');
-
 // This bot's main dialog.
 const { EchoBot } = require('./bot');
 
@@ -62,12 +61,13 @@ const myBot = new EchoBot();
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
+    // console.log(req)
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
+        // console.log("开手机",context)
         await myBot.run(context);
     });
 });
-
 // Listen for Upgrade requests for Streaming.
 server.on('upgrade', (req, socket, head) => {
     // Create an adapter scoped to this WebSocket connection to allow storing session data.

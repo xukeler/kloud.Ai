@@ -19,12 +19,12 @@ class EchoBot extends ActivityHandler {
             const welcomeText = 'Welcome to kloud Ai!';
             const card =  CardFactory.signinCard(
                 'Sign in Kloud',
-                'https://kloud.cn',
+                'https://kloud.cn?'+context.activity.channelId+'='+context.activity.from.id,
             );
             reply.attachments = [card];
             for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
                 if (membersAdded[cnt].id !== context.activity.recipient.id) {
-                    await context.sendActivity(welcomeText);
+                    await context.sendActivity(context.activity.channelId);
                     await context.sendActivity(reply);
                 }
             }
