@@ -12,10 +12,10 @@ const restify = require('restify');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-const { BotFrameworkAdapter } = require('botbuilder');
+const { BotFrameworkAdapter, } = require('botbuilder');
 // This bot's main dialog.
 const { EchoBot } = require('./bot');
-
+const { ProactiveBot } = require('./bots/proactiveBot');
 // Create HTTP server
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -58,16 +58,28 @@ adapter.onTurnError = onTurnErrorHandler;
 
 // Create the main dialog.
 const myBot = new EchoBot();
-
+const conversationReferences = {};
+const bot = new ProactiveBot(conversationReferences);
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
-    // console.log(req)
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        // console.log("开手机",context)
         await myBot.run(context);
+        await bot.run(context);
     });
 });
+server.post('/api/login', async (req, res) => {
+    let arr=req.getQuery().split("=");
+    for (const conversationReference of Object.values(conversationReferences)) {
+        await adapter.continueConversation(conversationReference, async turnContext => {
+            // If you encounter permission-related errors when sending this message, see
+            // https://aka.ms/BotTrustServiceUrl
+            await turnContext.sendActivity('Login to kloud successfully');
+        });
+    }
+
+});
+
 // Listen for Upgrade requests for Streaming.
 server.on('upgrade', (req, socket, head) => {
     // Create an adapter scoped to this WebSocket connection to allow storing session data.

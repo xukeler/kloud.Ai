@@ -16,15 +16,15 @@ class EchoBot extends ActivityHandler {
         this.onMembersAdded(async (context, next) => {
             const reply = { type: ActivityTypes.Message };
             const membersAdded = context.activity.membersAdded;
-            const welcomeText = 'Welcome to kloud Ai!';
+            const welcomeText = 'Welcome to kloud.ai, Please login!';
             const card =  CardFactory.signinCard(
                 'Sign in Kloud',
-                'https://kloud.cn?'+context.activity.channelId+'='+context.activity.from.id,
+                'https://testkloudsync.peertime.cn/login?'+context.activity.channelId+'='+context.activity.from.id,
             );
             reply.attachments = [card];
             for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
                 if (membersAdded[cnt].id !== context.activity.recipient.id) {
-                    await context.sendActivity(context.activity.channelId);
+                    await context.sendActivity(welcomeText);
                     await context.sendActivity(reply);
                 }
             }
