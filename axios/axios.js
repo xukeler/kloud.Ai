@@ -38,7 +38,7 @@ let Webapi={
             return null;
         } else if(res_Json&&res_Json.RetCode==0) {
             return res_Json.RetData
-        
+        }
     },
     async getTeamsToken(id){
         let url ='User/TokenByTeamsSessionID?id='+id;
