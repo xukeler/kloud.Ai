@@ -22,10 +22,11 @@ class EchoBot extends ActivityHandler {
                 'https://testkloudsync.peertime.cn/login?'+context.activity.channelId+'='+context.activity.from.id,
             );
             reply.attachments = [card];
+            await context.sendActivity(welcomeText);
             for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
                 if (membersAdded[cnt].id !== context.activity.recipient.id) {
                     await context.sendActivity(welcomeText);
-                    await context.sendActivity(reply);
+                    // await context.sendActivity(reply);
                 }
             }
             // By calling next() you ensure that the next BotHandler is run.
