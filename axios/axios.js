@@ -32,12 +32,13 @@ let Webapi={
     async getSkypeToken(id){
         let url ='User/TokenBySkypeSessionID?id='+id;
         let result=await this.getAjax(url);
-        if (!result)
+        let res_Json=eval('(' + result + ')')
+        if (!res_Json)
         {
             return null;
-        } else if(result&&result.RetCode==0&&result.RetData){
-            return result.RetData;
-        }
+        } else if(res_Json&&res_Json.RetCode==0) {
+            return res_Json.RetData
+        
     },
     async getTeamsToken(id){
         let url ='User/TokenByTeamsSessionID?id='+id;

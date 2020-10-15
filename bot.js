@@ -26,7 +26,7 @@ class EchoBot extends ActivityHandler {
                     );
                 reply.attachments = [card]; 
                 await context.sendActivity(reply);
-                await context.sendActivity(res);
+                await context.sendActivity('test');
             }
 
             await next();
