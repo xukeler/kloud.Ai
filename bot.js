@@ -19,14 +19,14 @@ class EchoBot extends ActivityHandler {
                 const replyText = `Echo: ${ context.activity.text }`;
                 await context.sendActivity(replyText);
             }else{
-                // const reply = { type: ActivityTypes.Message };
-                // const card =  CardFactory.signinCard(
-                //     'Sign in Kloud',
-                //     'https://testkloudsync.peertime.cn/login?'+context.activity.channelId+'='+context.activity.from.id,
-                //     "Your identity information has not been bound to Kloud, please log in to KLoud and bind it before use."
-                //     );
-                // reply.attachments = [card]; 
-                await context.sendActivity('123');
+                const reply = { type: ActivityTypes.Message };
+                const card =  CardFactory.signinCard(
+                    'Sign in Kloud',
+                    'https://testkloudsync.peertime.cn/login?'+context.activity.channelId+'='+context.activity.from.id,
+                    "Your identity information has not been bound to Kloud, please log in to KLoud and bind it before use."
+                    );
+                reply.attachments = [card]; 
+                await context.sendActivity(reply);
             }
 
             await next();
