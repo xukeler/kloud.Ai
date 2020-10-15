@@ -70,6 +70,10 @@ server.post('/api/messages', (req, res) => {
 });
 server.post('/api/login', async (req, res) => {
     let arr=req.getQuery().split("=");
+    let obj={
+        RetCode:0
+    }
+    res.json(obj)
     for (const conversationReference of Object.values(conversationReferences)) {
         await adapter.continueConversation(conversationReference, async turnContext => {
             // If you encounter permission-related errors when sending this message, see

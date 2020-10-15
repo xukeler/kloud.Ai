@@ -10,7 +10,7 @@ class EchoBot extends ActivityHandler {
         this.onMessage(async (context, next) => {
             let res="";
             if(context.activity.channelId=="skype"){
-                res= await Webapi.getSkypeToken(context.activity.from.id);
+                res= await Webapi.getSkypeToken("29:1vpKz7N8WAy1eEwj7jWwP9lFnwXmecxTTleaf504I2gg");
             }else{
                 res= await Webapi.getTeamsToken(context.activity.from.id);
             }
