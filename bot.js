@@ -10,7 +10,7 @@ class EchoBot extends ActivityHandler {
         this.onMessage(async (context, next) => {
             let res="";
             if(context.activity.channelId=="skype"){
-                res= await Webapi.getSkypeToken("29:1vpKz7N8WAy1eEwj7jWwP9lFnwXmecxTTleaf504I2gg");
+                res= await Webapi.getSkypeToken(context.activity.from.id);
             }else{
                 res= await Webapi.getTeamsToken(context.activity.from.id);
             }
@@ -26,6 +26,7 @@ class EchoBot extends ActivityHandler {
                     );
                 reply.attachments = [card]; 
                 await context.sendActivity(reply);
+                await context.sendActivity(res);
             }
 
             await next();
