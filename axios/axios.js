@@ -31,7 +31,7 @@ let Webapi={
     },
     async getSkypeToken(id){
         let url ='User/TokenBySkypeSessionID?id='+id;
-        let result=await this.getAjax(url,obj);
+        let result=await this.getAjax(url);
         if (!result)
         {
             return null;
