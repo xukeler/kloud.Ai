@@ -9,10 +9,11 @@ class EchoBot extends ActivityHandler {
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
             let res="";
-            if(context.activity.channelId=="skype"){
-                res= await Webapi.getSkypeToken(context.activity.from.id);
+            if(context.activity.channelId){
+                res= await Webapi.getSkypeToken(encodeURIComponent(context.activity.from.id));
+                console.log(res)
             }else{
-                res= await Webapi.getTeamsToken(context.activity.from.id);
+                res= await Webapi.getTeamsToken(encodeURIComponent(context.activity.from.id));
             }
             if(res){
                 const replyText = `Echo: ${ context.activity.text }`;
@@ -21,7 +22,7 @@ class EchoBot extends ActivityHandler {
                 const reply = { type: ActivityTypes.Message };
                 const card =  CardFactory.signinCard(
                     'Sign in Kloud',
-                    'https://testkloudsync.peertime.cn/login?'+context.activity.channelId+'='+context.activity.from.id,
+                    'https://testkloudsync.peertime.cn/login?'+context.activity.channelId+'='+encodeURIComponent(context.activity.from.id),
                     "Your identity information has not been bound to Kloud, please log in to Kloud."
                     );
                 reply.attachments = [card]; 
