@@ -23,13 +23,6 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log('\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator');
     console.log('\nTo talk to your bot, open the emulator select "Open Bot"');
 });
-server.use(
-    function crossOrigin(req,res,next){
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "X-Requested-With");
-      return next();
-    }
-  );
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about how bots work.
 const adapter = new BotFrameworkAdapter({
@@ -76,10 +69,7 @@ server.post('/api/messages', (req, res) => {
 });
 server.post('/api/login', async (req, res) => {
     let arr=req.getQuery().split("=");
-    let obj={
-        RetCode:0
-    }
-    res.json(obj)
+    res.json("")
     for (const conversationReference of Object.values(conversationReferences)) {
         await adapter.continueConversation(conversationReference, async turnContext => {
             // If you encounter permission-related errors when sending this message, see
