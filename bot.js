@@ -9,12 +9,11 @@ class EchoBot extends ActivityHandler {
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
             let res="";
-            if(context.activity.channelId=="skype"){
-                res= await Webapi.getSkypeToken(context.activity.from.id);
-            }else{
-                res= await Webapi.getTeamsToken(context.activity.from.id);
-            }
-            
+            // if(context.activity.channelId=="skype"){
+            //     res= await Webapi.getSkypeToken(context.activity.from.id);
+            // }else{
+            //     res= await Webapi.getTeamsToken(context.activity.from.id);
+            // }
             if(res){
                 const replyText = `Echo: ${ context.activity.text }`;
                 await context.sendActivity(replyText);
@@ -27,6 +26,7 @@ class EchoBot extends ActivityHandler {
                     );
                 reply.attachments = [card]; 
                 await context.sendActivity(reply);
+                await context.sendActivity('test');
             }
 
             await next();
