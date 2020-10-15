@@ -68,7 +68,7 @@ server.post('/api/messages', (req, res) => {
         await bot.run(context);
     });
 });
-server.post('/api/login', async (req, res) => {
+server.get('/api/login', async (req, res) => {
     let arr=req.getQuery().split("=");
     let obj={
         RetCode:0
