@@ -69,7 +69,7 @@ server.post('/api/messages', (req, res) => {
 });
 server.post('/api/login', async (req, res) => {
     let arr=req.getQuery().split("=");
-    res.json("")
+
     for (const conversationReference of Object.values(conversationReferences)) {
         await adapter.continueConversation(conversationReference, async turnContext => {
             // If you encounter permission-related errors when sending this message, see
@@ -77,7 +77,7 @@ server.post('/api/login', async (req, res) => {
             await turnContext.sendActivity('Login to kloud successfully');
         });
     }
-
+    res.json(arr[0])
 });
 
 // Listen for Upgrade requests for Streaming.
