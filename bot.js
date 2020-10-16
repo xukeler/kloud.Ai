@@ -16,7 +16,7 @@ class EchoBot extends ActivityHandler {
             }
             if(res){
                 const replyText = `Echo: ${ context.activity.text }`;
-                await context.sendActivity(replyText);
+                await context.sendActivity(context.activity.from.id);
             }else{
                 const reply = { type: ActivityTypes.Message };
                 const card =  CardFactory.signinCard(

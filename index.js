@@ -67,16 +67,16 @@ server.post('/api/messages', (req, res) => {
         await bot.run(context);
     });
 });
-server.post('/api/login', async (req, res) => {
+server.get('/api/login', async (req, res) => {
     let arr=req.getQuery().split("=");
     for (const conversationReference of Object.values(conversationReferences)) {
-        console.log(conversationReference)
         await adapter.continueConversation(conversationReference, async turnContext => {
             // If you encounter permission-related errors when sending this message, see
             // https://aka.ms/BotTrustServiceUrl
             await turnContext.sendActivity('Login to kloud successfully');
         });
     }
+    console.log(Object.values(conversationReferences))
     res.json({data:Object.values(conversationReferences)})
 });
 
