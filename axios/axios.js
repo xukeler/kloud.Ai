@@ -30,10 +30,8 @@ let Webapi={
         axios.defaults.headers.common['Authorization'] = token;
     },
     async getSkypeToken(id){
-        console.log(id)
         let url ='User/TokenBySkypeSessionID?id='+id;
         let result=await this.getAjax(url);
-        console.log(result)
         let res_Json=eval('(' + result + ')')
         if (!res_Json)
         {

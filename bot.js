@@ -11,7 +11,6 @@ class EchoBot extends ActivityHandler {
             let res="";
             if(context.activity.channelId){
                 res= await Webapi.getSkypeToken(encodeURIComponent(context.activity.from.id));
-                console.log(res)
             }else{
                 res= await Webapi.getTeamsToken(encodeURIComponent(context.activity.from.id));
             }
@@ -27,7 +26,6 @@ class EchoBot extends ActivityHandler {
                     );
                 reply.attachments = [card]; 
                 await context.sendActivity(reply);
-                await context.sendActivity('test');
             }
 
             await next();
