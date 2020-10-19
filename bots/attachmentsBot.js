@@ -25,10 +25,10 @@ class AttachmentsBot extends ActivityHandler {
                 await this.handleIncomingAttachment(context);
             } else {
                 // Since no attachment was received, send an attachment to the user.
-                await this.handleOutgoingAttachment(context);
+                // await this.handleOutgoingAttachment(context);
             }
             // Send a HeroCard with potential options for the user to select.
-            await this.displayOptions(context);
+            // await this.displayOptions(context);
 
             // By calling next() you ensure that the next BotHandler is run.
             await next();
@@ -42,13 +42,14 @@ class AttachmentsBot extends ActivityHandler {
      */
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
+        if(!token) return
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
-        turnContext.sendActivity(turnContext.activity.attachments.length)
+        console.log(turnContext.activity.attachments)
+        turnContext.sendActivity(turnContext.activity.attachments[0].name)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
-
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
         turnContext.sendActivity("文件上传转换中...")
