@@ -112,7 +112,8 @@ class AttachmentsBot extends ActivityHandler {
             // arraybuffer is necessary for images
             context.sendActivity("3")
             const response = await axios.get(url, { responseType: 'arraybuffer' });
-            // console.log(response)
+            console.log(response.config.url)
+            context.sendActivity(response.config.url)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
             context.sendActivity("444")
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
@@ -233,6 +234,7 @@ class AttachmentsBot extends ActivityHandler {
                 return 1 //上传文件已经存在
             }
         } catch (error) {
+            context.sendActivity(error+"")
             console.error(error);
             return 6004;
         }
