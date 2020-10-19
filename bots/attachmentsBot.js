@@ -45,7 +45,7 @@ class AttachmentsBot extends ActivityHandler {
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
-        turnContext.sendActivity(turnContext.activity.attachments)
+        turnContext.sendActivity(turnContext.activity.attachments.length)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
 
