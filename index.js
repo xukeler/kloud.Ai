@@ -16,6 +16,7 @@ const { BotFrameworkAdapter, } = require('botbuilder');
 // This bot's main dialog.
 const { EchoBot } = require('./bot');
 const { ProactiveBot } = require('./bots/proactiveBot');
+const { AttachmentsBot } = require('./bots/attachmentsBot');
 // Create HTTP server
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -59,19 +60,19 @@ adapter.onTurnError = onTurnErrorHandler;
 const myBot = new EchoBot();
 const conversationReferences = {};
 const bot = new ProactiveBot(conversationReferences);
+const Abot = new AttachmentsBot();
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
         await myBot.run(context);
         await bot.run(context);
+        await Abot.run(context);
     });
 });
 server.get('/api/login', async (req, res) => {
     let arr=req.getQuery().split("=");
-    new ProactiveBot(conversationReferences);
     for (const conversationReference of Object.values(conversationReferences)) {
-        
         await adapter.continueConversation(conversationReference, async turnContext => {
             // If you encounter permission-related errors when sending this message, see
             // https://aka.ms/BotTrustServiceUrl

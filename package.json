@@ -16,10 +16,14 @@
         "url": "https://github.com"
     },
     "dependencies": {
+        "ali-oss": "^6.11.2",
+        "aws-sdk": "^2.492.0",
+        "axios": "^0.19.0",
         "botbuilder": "~4.10.3",
+        "crypto": "^1.0.1",
         "dotenv": "^8.2.0",
-        "restify": "~8.5.1",
-        "axios": "^0.19.0"
+        "request": "^2.88.2",
+        "restify": "~8.5.1"
     },
     "devDependencies": {
         "eslint": "^7.0.0",

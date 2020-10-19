@@ -12,7 +12,6 @@ class ProactiveBot extends ActivityHandler {
 
         this.onConversationUpdate(async (context, next) => {
             this.addConversationReference(context.activity);
-
             await next();
         });
     }

@@ -1,6 +1,9 @@
 const axios =require('axios') 
 axios.defaults.timeout = 20000;
 axios.defaults.baseURL = 'https://testapi.peertime.cn/peertime/V1/';
+const Https =require("https");
+const { resolve } = require('path');
+var request = require('request');
 let Webapi={
     getAjax(url){
         return new Promise((resolve, reject) => {
@@ -17,7 +20,7 @@ let Webapi={
     postAjax(url,obj)
     {
         return new Promise((resolve, reject) => {
-            axios.post(url,JSON.stringify(obj)).then(res =>
+            axios.post(url,obj).then(res =>
             {
                 resolve(res.data);
             }).catch(err =>
@@ -27,7 +30,7 @@ let Webapi={
         });
     },
     setToken(token){
-        axios.defaults.headers.common['Authorization'] = token;
+        axios.defaults.headers.UserToken = token;
     },
     async getSkypeToken(id){
         let url ='User/TokenBySkypeSessionID?id='+id;
@@ -51,6 +54,125 @@ let Webapi={
             return res_Json.RetData
         }
     },
-
+    async checkHash(filename, hash)
+    {
+        const str=Buffer.from(filename, 'utf8');
+        var uname = encodeURIComponent(str.toString('base64'));
+        var url= "FavoriteAttachment/UploadFileWithHash?Title=" +uname +"&Description=&Hash=" +hash
+        var result = await this.postAjax(url,null);
+        let res_Json=eval('(' + result + ')')//返回的数据是一个json字符串，但是JSON.parse不能转换，需要使用eval方法
+        if(!res_Json)
+        {
+            return null;
+        }
+        else
+        {
+            return res_Json;
+        }
+    },
+    async startConverting(data){
+        return new Promise((resolve, reject)=>{
+            var url="https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting";
+            request({
+                url: url,
+                method: "POST",
+                rejectUnauthorized: false,
+                json: true,
+                headers: {
+                    "content-type": "application/json",
+                    "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
+                },
+                body: data
+            }, function(error, response, body) {
+                
+                if (!error&&response.statusCode == 200) {
+                    resolve(body.Data.Token)
+                }else if(error||response.statusCode){
+                    resolve(null)
+                }
+            }); 
+        })
+    },
+    async queryConvertPercentage(data){
+        return new Promise((resolve,reject)=>{
+            var url="https://livedoc.peertime.cn/TxLiveDocumentApi/api/queryConverting";
+            request({
+                url: url,
+                method: "POST",
+                rejectUnauthorized: false,
+                json: true,
+                headers: {
+                    "content-type": "application/json",
+                    "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
+                },
+                body: data
+            }, function(error, response, body) {
+                if (!error&&response.statusCode == 200) {
+                    resolve(body)
+                }else if(error||response.statusCode){
+                    resolve(null)
+                }
+            });             
+        })
+    },
+    getOssKey(){
+        return new Promise((resolve, reject)=>{
+            var option={
+                rejectUnauthorized: false,
+                headers:{
+                    authorization:"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0"
+                }
+            }
+            Https.get("https://livedoc.peertime.cn/TxLiveDocumentApi/api/prepareUploading?clientIp=",option,(res)=>{
+                res.on('data', (id) => {
+                    let ossObj=eval('(' + id.toString() + ')')
+                    if(!ossObj||!ossObj.Success){
+                        this.getOssKey()
+                    }else{
+                        resolve(ossObj)
+                    }
+                  })
+            
+            }) 
+        })
+    },
+    async UploadFavNewFile(obj)
+    {
+        var url =  "FavoriteAttachment/UploadNewFile";
+        var result = await this.postAjax(url, obj);
+        let res_Json=eval('(' + result + ')')
+        if (!res_Json)
+        {
+            return null;
+        } else if(res_Json&&res_Json.RetCode==0) {
+            return res_Json.RetData
+        }
+    },
+    async uploadNewFile(filename,servername,fileid,pagecount,md5,size){
+        var newfile= new Object();
+        newfile.Title =filename;
+        newfile.SchoolID =-1;
+        newfile.Description =filename;
+        newfile.Hash =md5;
+        newfile.FileID=fileid;
+        newfile.PageCount =pagecount;
+        newfile.FileSize=size;
+        newfile.FileName=servername.lastIndexOf(".")>-1?servername.substr(0,servername.lastIndexOf(".")):servername;
+        var newfileresult =await this.UploadFavNewFile(newfile);
+        return newfileresult;
+    },
+    async getLiveId(id,title)
+    {
+        const buf = Buffer.from(title, 'utf8');
+        var url = "Lesson/AddTempLessonWithOriginalDocument?attachmentID=" + id+"&Title="+buf.toString('base64');
+        var result = await this.postAjax(url);
+        let res_Json=eval('(' + result + ')')
+        if (!res_Json)
+        {
+            return null;
+        } else if(res_Json&&res_Json.RetCode==0) {
+            return res_Json.RetData
+        }
+    },
 }
 module.exports.Webapi=Webapi

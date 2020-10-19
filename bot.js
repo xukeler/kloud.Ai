@@ -10,13 +10,14 @@ class EchoBot extends ActivityHandler {
         this.onMessage(async (context, next) => {
             let res="";
             if(context.activity.channelId){
-                res= await Webapi.getSkypeToken(encodeURIComponent(context.activity.from.id));
+                res= await Webapi.getSkypeToken(encodeURIComponent("29:1vpKz7N8WAy1eEwj7jWwP9lFnwXmecxTTleaf504I2gg"));
             }else{
                 res= await Webapi.getTeamsToken(encodeURIComponent(context.activity.from.id));
             }
             if(res){
+                // await Webapi.setToken(res)
                 const replyText = `Echo: ${ context.activity.text }`;
-                await context.sendActivity(context.activity.from.id);
+                await context.sendActivity(replyText);
             }else{
                 const reply = { type: ActivityTypes.Message };
                 const card =  CardFactory.signinCard(
