@@ -49,7 +49,7 @@ class AttachmentsBot extends ActivityHandler {
 
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
-        turnContext.sendActivity("文件上传装换中...")
+        turnContext.sendActivity("文件上传转换中...")
         async function replyForReceivedAttachments(localAttachmentData) {
             // if (localAttachmentData) {
             //     // Because the TurnContext was bound to this function, the bot can call
