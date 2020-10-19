@@ -51,14 +51,14 @@ class AttachmentsBot extends ActivityHandler {
         // and what the name of the saved file is.
         turnContext.sendActivity("文件上传转换中...")
         async function replyForReceivedAttachments(localAttachmentData) {
-            // if (localAttachmentData) {
-            //     // Because the TurnContext was bound to this function, the bot can call
-            //     // `TurnContext.sendActivity` via `this.sendActivity`;
-            //     await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-            //         `has been received and saved to "${ localAttachmentData.localPath }".`);
-            // } else {
-            //     await this.sendActivity('Attachment was not successfully saved to disk.');
-            // }
+            if (localAttachmentData) {
+                // Because the TurnContext was bound to this function, the bot can call
+                // `TurnContext.sendActivity` via `this.sendActivity`;
+                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+                    `has been received and saved to "${ localAttachmentData.localPath }".`);
+            } else {
+                await this.sendActivity('Attachment was not successfully saved to disk.');
+            }
         }
 
         // Prepare Promises to reply to the user with information about saved attachments.
@@ -233,10 +233,10 @@ class AttachmentsBot extends ActivityHandler {
         // }else{
         //     return false
         // }
-        // return {
-        //     fileName: attachment.name,
-        //     localPath: localFileName
-        // };
+        return {
+            fileName: attachment.name,
+            localPath: localFileName
+        };
     }
      async sendLiveDocCard(res,context){
          console.log(999999)
