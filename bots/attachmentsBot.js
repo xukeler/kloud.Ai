@@ -118,6 +118,7 @@ class AttachmentsBot extends ActivityHandler {
             }
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
+            context.sendActivity(res)
             if(res&&res.RetCode==0){
                 console.log(res)
             }
@@ -175,6 +176,7 @@ class AttachmentsBot extends ActivityHandler {
                         var name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                         // object-name可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
                         let resultOss = await client.put(name,response.data);
+                        context.sendActivity(res)
                         var type=Util.GetCovertType(attachment.name);
                         var _bucket={                    
                             ServiceProviderId: convertParam.ServiceProviderId,
