@@ -75,7 +75,7 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} attachment
      */
     async downloadAttachmentAndWrite(context,attachment) {
-        context.sendActivity(attachment)
+        context.sendActivity("1")
         // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
         const conversationReference = TurnContext.getConversationReference(context.activity);
@@ -84,8 +84,8 @@ class AttachmentsBot extends ActivityHandler {
         // Local file path for the bot to save the attachment.
         const localFileName = path.join(__dirname, attachment.name);
         let send=(uploadRes)=>{
+            context.sendActivity("2")
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
-                console.log(idObj)
                 if(idObj){
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
                     const reply = { type: ActivityTypes.Message };
@@ -112,6 +112,7 @@ class AttachmentsBot extends ActivityHandler {
         }
         try {
             // arraybuffer is necessary for images
+            context.sendActivity("3")
             const response = await axios.get(url, { responseType: 'arraybuffer' });
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
@@ -122,11 +123,13 @@ class AttachmentsBot extends ActivityHandler {
             }
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
-            context.sendActivity(res)
+            context.sendActivity("4")
+            context.sendActivity(JSON.stringify(res)+"")
             if(res&&res.RetCode==0){
                 console.log(res)
             }
             if(res&&res.RetCode==-6002){
+                context.sendActivity(5)
                 let ossObj=await Webapi.getOssKey();
                 var convertParam = {
                     ServiceProviderId: ossObj.Data.ServiceProviderId,
@@ -180,7 +183,7 @@ class AttachmentsBot extends ActivityHandler {
                         var name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                         // object-name可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
                         let resultOss = await client.put(name,response.data);
-                        context.sendActivity(res)
+                        context.sendActivity(6)
                         var type=Util.GetCovertType(attachment.name);
                         var _bucket={                    
                             ServiceProviderId: convertParam.ServiceProviderId,
