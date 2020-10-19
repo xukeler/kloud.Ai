@@ -44,6 +44,7 @@ class AttachmentsBot extends ActivityHandler {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
+        turnContext.sendActivity(turnContext.activity.attachments)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
 
