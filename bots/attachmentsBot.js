@@ -25,10 +25,10 @@ class AttachmentsBot extends ActivityHandler {
                 await this.handleIncomingAttachment(context);
             } else {
                 // Since no attachment was received, send an attachment to the user.
-                // await this.handleOutgoingAttachment(context);
+                await this.handleOutgoingAttachment(context);
             }
             // Send a HeroCard with potential options for the user to select.
-            // await this.displayOptions(context);
+            await this.displayOptions(context);
 
             // By calling next() you ensure that the next BotHandler is run.
             await next();
