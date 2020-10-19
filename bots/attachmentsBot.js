@@ -72,6 +72,7 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} attachment
      */
     async downloadAttachmentAndWrite(context,attachment) {
+        context.sendActivity(attachment)
         // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
         const conversationReference = TurnContext.getConversationReference(context.activity);
