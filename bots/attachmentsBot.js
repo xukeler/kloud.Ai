@@ -83,7 +83,6 @@ class AttachmentsBot extends ActivityHandler {
         // Local file path for the bot to save the attachment.
         const localFileName = path.join(__dirname, attachment.name);
         let send=(uploadRes)=>{
-            context.sendActivity("2")
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
@@ -113,19 +112,20 @@ class AttachmentsBot extends ActivityHandler {
             // arraybuffer is necessary for images
             context.sendActivity("3")
             const response = await axios.get(url, { responseType: 'arraybuffer' });
+            // console.log(response)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
-            context.sendActivity(response)
-            context.sendActivity(response.headers['content-type'])
+            context.sendActivity("444")
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
-            if (response.headers['content-type'] === 'application/json') {
-                response.data = JSON.parse(response.data, (key, value) => {
-                    return value && value.type === 'Buffer' ? Buffer.from(value.data) : value;
-                });
-            }
+            // if (response.headers['content-type'] === 'application/json') {
+            //     response.data = JSON.parse(response.data, (key, value) => {
+            //         return value && value.type === 'Buffer' ? Buffer.from(value.data) : value;
+            //     });
+            // }
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
+            console.log(res)
             context.sendActivity("4")
-            context.sendActivity("4")
+            context.sendActivity(res.RetCode+"1")
             if(res&&res.RetCode==0){
                 console.log(res)
             }
@@ -183,7 +183,7 @@ class AttachmentsBot extends ActivityHandler {
                     try {
                         var name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                         // object-name可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
-                        let resultOss = await client.put(name,response.data);
+                         await client.put(name,response.data);
                         context.sendActivity(6)
                         var type=Util.GetCovertType(attachment.name);
                         var _bucket={                    
