@@ -46,7 +46,6 @@ class AttachmentsBot extends ActivityHandler {
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
-        console.log(turnContext.activity.attachments)
         turnContext.sendActivity(turnContext.activity.attachments[0].name)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
@@ -115,6 +114,8 @@ class AttachmentsBot extends ActivityHandler {
             context.sendActivity("3")
             const response = await axios.get(url, { responseType: 'arraybuffer' });
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
+            context.sendActivity(response)
+            context.sendActivity(response.headers['content-type'])
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
             if (response.headers['content-type'] === 'application/json') {
                 response.data = JSON.parse(response.data, (key, value) => {
@@ -124,7 +125,7 @@ class AttachmentsBot extends ActivityHandler {
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
             context.sendActivity("4")
-            context.sendActivity(JSON.stringify(res)+"")
+            context.sendActivity("4")
             if(res&&res.RetCode==0){
                 console.log(res)
             }
