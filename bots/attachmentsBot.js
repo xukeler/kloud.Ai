@@ -22,6 +22,7 @@ class AttachmentsBot extends ActivityHandler {
             // Determine how the bot should process the message by checking for attachments.
             if (context.activity.attachments && context.activity.attachments.length > 0) {
                 // The user sent an attachment and the bot should handle the incoming attachment.
+                context.sendActivity({ attachments: [this.createOAuthCard()] });
                 await this.handleIncomingAttachment(context);
             } else {
                 // Since no attachment was received, send an attachment to the user.
@@ -34,7 +35,13 @@ class AttachmentsBot extends ActivityHandler {
             await next();
         });
     }
-
+    createOAuthCard() {
+        return CardFactory.oauthCard(
+            'OAuth connection', // Replace with the name of your Azure AD connection
+            'Sign In',
+            'BotFramework OAuth Card'
+        );
+    }
     /**
      * Saves incoming attachments to disk by calling `this.downloadAttachmentAndWrite()` and
      * responds to the user with information about the saved attachment or an error.
@@ -46,12 +53,12 @@ class AttachmentsBot extends ActivityHandler {
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
+        console.log(turnContext)
         turnContext.sendActivity(turnContext.activity.attachments[0].name)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
-        turnContext.sendActivity("文件上传转换中...")
         async function replyForReceivedAttachments(localAttachmentData) {
             if (localAttachmentData) {
                 // Because the TurnContext was bound to this function, the bot can call
@@ -74,6 +81,7 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} attachment
      */
     async downloadAttachmentAndWrite(context,attachment) {
+        console.log(context,attachment)
         context.sendActivity("1")
         // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
@@ -122,9 +130,10 @@ class AttachmentsBot extends ActivityHandler {
             //         return value && value.type === 'Buffer' ? Buffer.from(value.data) : value;
             //     });
             // }
+            console.log(response)
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
-            console.log(res)
+            
             context.sendActivity("4")
             context.sendActivity(res.RetCode+"1")
             if(res&&res.RetCode==0){

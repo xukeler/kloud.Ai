@@ -32,6 +32,10 @@ const adapter = new BotFrameworkAdapter({
     channelService: process.env.ChannelService,
     openIdMetadata: process.env.BotOpenIdMetadata
 });
+console.log({    appId: process.env.MicrosoftAppId,
+    appPassword: process.env.MicrosoftAppPassword,
+    channelService: process.env.ChannelService,
+    openIdMetadata: process.env.BotOpenIdMetadata})
 
 // Catch-all for errors.
 const onTurnErrorHandler = async (context, error) => {
@@ -72,6 +76,7 @@ server.post('/api/messages', (req, res) => {
 });
 server.get('/api/login', async (req, res) => {
     let arr=req.getQuery().split("=");
+    console.log(req.getQuery())
     for (const conversationReference of Object.values(conversationReferences)) {
         await adapter.continueConversation(conversationReference, async turnContext => {
             // If you encounter permission-related errors when sending this message, see
