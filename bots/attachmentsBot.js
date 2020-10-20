@@ -114,8 +114,17 @@ class AttachmentsBot extends ActivityHandler {
 
         }
         let s3Convert=async(res,_bucket,attachment,s3Name)=>{
+            for (const conversationReference of Object.values(conversationReferences)) {
+                await adapter.continueConversation(conversationReference, async turnContext => {
+                    await turnContext.sendActivity("开始转换");
+                });
+            }
             Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
-                context.sendActivity(code)
+                for (const conversationReference of Object.values(conversationReferences)) {
+                    await adapter.continueConversation(conversationReference, async turnContext => {
+                        await turnContext.sendActivity("开始转换3333");
+                    });
+                }
                 function S3setTime(specifiedKey){
                     Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                         if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
