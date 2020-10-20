@@ -79,6 +79,13 @@ class AttachmentsBot extends ActivityHandler {
         conversationReferences[conversationReference.conversation.id] = conversationReference;
         // Local file path for the bot to save the attachment.
         const localFileName = path.join(__dirname, attachment.name);
+        let test=async()=>{
+            for (const conversationReference of Object.values(conversationReferences)) {
+                await adapter.continueConversation(conversationReference, async turnContext => {
+                    await turnContext.sendActivity("test");
+                });
+            }
+        }
         let send=(uploadRes)=>{
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
@@ -119,7 +126,6 @@ class AttachmentsBot extends ActivityHandler {
             //         return value && value.type === 'Buffer' ? Buffer.from(value.data) : value;
             //     });
             // }
-            console.log(response)
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
             context.sendActivity(res.RetCode+"1")
@@ -127,7 +133,6 @@ class AttachmentsBot extends ActivityHandler {
                 console.log(res)
             }
             if(res&&res.RetCode==-6002){
-                
                 let ossObj=await Webapi.getOssKey();
                 var convertParam = {
                     ServiceProviderId: ossObj.Data.ServiceProviderId,
@@ -175,9 +180,10 @@ class AttachmentsBot extends ActivityHandler {
                             context.sendActivity("Successfully uploaded data to myBucket/myKey")
                             var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                             var type=Util.GetCovertType(attachment.name);
-                            context.sendActivity("Successfully")
                             await Webapi.startConverting({Key:s3Name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
+                            context.sendActivity("Successfully")
                             function S3setTime(specifiedKey){
+                                test()
                                 Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                     if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                         var servername=Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));;
