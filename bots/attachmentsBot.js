@@ -186,7 +186,6 @@ class AttachmentsBot extends ActivityHandler {
                             context.sendActivity("reg"+_bucket.RegionName)
                             context.sendActivity("buc"+_bucket.BucketName)
                             context.sendActivity("path"+res.RetData.Path)
-                            return
                             let error=await Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                             context.sendActivity(error)
                             context.sendActivity("Successfully")
