@@ -179,9 +179,9 @@ class AttachmentsBot extends ActivityHandler {
                             console.log("Successfully uploaded data to myBucket/myKey");
                             context.sendActivity("Successfully uploaded data to myBucket/myKey")
                             var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
-                            var type=Util.GetCovertType(attachment.name);
+                            var S3type=Util.GetCovertType(attachment.name);
                             test()
-                            let error=await Webapi.startConverting({Key:s3Name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
+                            let error=await Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                             context.sendActivity(error)
                             context.sendActivity("Successfully")
                             function S3setTime(specifiedKey){
