@@ -131,7 +131,7 @@ class AttachmentsBot extends ActivityHandler {
                     "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
                 },
                 body: data
-            }, function(error, response, body) {
+            }, async(error, response, body)=> {
                 for (const conversationReference of Object.values(conversationReferences)) {
                     await adapter.continueConversation(conversationReference, async turnContext => {
                         await turnContext.sendActivity(response.statusCode);
