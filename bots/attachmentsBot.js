@@ -177,7 +177,7 @@ class AttachmentsBot extends ActivityHandler {
                             var type=Util.GetCovertType(attachment.name);
                             context.sendActivity("Successfully")
                             await Webapi.startConverting({Key:s3Name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
-                            function setTime(specifiedKey){
+                            function S3setTime(specifiedKey){
                                 Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                     if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                         var servername=Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));;
@@ -200,7 +200,7 @@ class AttachmentsBot extends ActivityHandler {
                                 })
     
                             }
-                            setTime({Key:s3Name,Bucket:_bucket})
+                            S3setTime({Key:s3Name,Bucket:_bucket})
                         }
                     });
                   }else{
