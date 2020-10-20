@@ -84,7 +84,8 @@ let Webapi={
                 },
                 body: data
             }, function(error, response, body) {
-                
+                resolve(response.statusCode)
+                return
                 if (!error&&response.statusCode == 200) {
                     resolve(body.Data.Token)
                 }else if(error||response.statusCode){
