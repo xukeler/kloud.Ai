@@ -119,7 +119,7 @@ class AttachmentsBot extends ActivityHandler {
                     await turnContext.sendActivity("开始转换");
                 });
             }
-            Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
+            Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then(async(code)=>{
                 for (const conversationReference of Object.values(conversationReferences)) {
                     await adapter.continueConversation(conversationReference, async turnContext => {
                         await turnContext.sendActivity("开始转换3333");
