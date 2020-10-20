@@ -141,6 +141,11 @@ class AttachmentsBot extends ActivityHandler {
                     AccessKeySecret:ossObj.Data.AccessKeySecret,
                     SecurityToken:ossObj.Data.SecurityToken,
                   }
+                  var _bucket={                    
+                    ServiceProviderId: convertParam.ServiceProviderId,
+                    RegionName: convertParam.RegionName,
+                    BucketName: convertParam.BucketName,
+                }
                   context.sendActivity(convertParam.ServiceProviderId+"5")
                   if(convertParam.ServiceProviderId==1){
                     var s3 = new AWS.S3({
@@ -171,6 +176,34 @@ class AttachmentsBot extends ActivityHandler {
                             console.log("Error uploading data: ", perr);
                         } else {
                             console.log("Successfully uploaded data to myBucket/myKey");
+                            context.sendActivity("Successfully uploaded data to myBucket/myKey")
+                            var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
+                            var type=Util.GetCovertType(attachment.name);
+                            await Webapi.startConverting({Key:s3Name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
+                            function setTime(specifiedKey){
+                                Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
+                                    if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
+                                        var servername=Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));;
+                                         Webapi.uploadNewFile(attachment.name,servername,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                            if(uploadRes){
+                                                send(uploadRes)
+                                            }
+                                         }).catch(function (error) {
+                                            console.log(error);
+                                          })
+                                    }else if(cresult&&cresult.Data.CurrentStatus==3){
+                                        return cresult
+                                    }else if(cresult){
+                                        setTimeout( ()=>{
+                                            setTime(specifiedKey)
+                                        },2000)
+                                    }
+                                }).catch((error)=>{
+    
+                                })
+    
+                            }
+                          setTime({Key:name,Bucket:_bucket})
                         }
                     });
                   }else{
@@ -187,11 +220,6 @@ class AttachmentsBot extends ActivityHandler {
                          await client.put(name,response.data);
                         context.sendActivity(6)
                         var type=Util.GetCovertType(attachment.name);
-                        var _bucket={                    
-                            ServiceProviderId: convertParam.ServiceProviderId,
-                            RegionName: convertParam.RegionName,
-                            BucketName: convertParam.BucketName,
-                        }
                         await Webapi.startConverting({Key:name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                         function setTime(specifiedKey){
                             Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
@@ -204,15 +232,6 @@ class AttachmentsBot extends ActivityHandler {
                                      }).catch(function (error) {
                                         console.log(error);
                                       })
-                                      
-                                    // await this.sendLiveDocCard(uploadRes,context).catch( (error)=> {
-                                    //     console.log(error);
-                                    //   })
-                                    // const reply = { type: ActivityTypes.Message };
-                                    // if(uploadRes){
-                                    //     console.log(44444)
-
-                                    // }
                                 }else if(cresult&&cresult.Data.CurrentStatus==3){
                                     return cresult
                                 }else if(cresult){
