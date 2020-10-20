@@ -42,6 +42,7 @@ class AttachmentsBot extends ActivityHandler {
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
         if(!token) return
+        turnContext.sendActivity(token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
@@ -180,7 +181,11 @@ class AttachmentsBot extends ActivityHandler {
                             context.sendActivity("Successfully uploaded data to myBucket/myKey")
                             var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                             var S3type=Util.GetCovertType(attachment.name);
-                            test()
+                            context.sendActivity(s3Name)
+                            context.sendActivity(S3type)
+                            context.sendActivity(_bucket.RegionName)
+                            context.sendActivity(_bucket.BucketName)
+                            context.sendActivity(res.RetData.Path)
                             let error=await Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                             context.sendActivity(error)
                             context.sendActivity("Successfully")
