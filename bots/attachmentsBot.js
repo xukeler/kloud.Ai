@@ -72,7 +72,6 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} attachment
      */
     async downloadAttachmentAndWrite(context,attachment) {
-        context.sendActivity("1")
         // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
         const conversationReference = TurnContext.getConversationReference(context.activity);
@@ -114,7 +113,6 @@ class AttachmentsBot extends ActivityHandler {
             const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:botToken.token_type+' '+botToken.access_token}});
             context.sendActivity(response.config.url)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
-            context.sendActivity("444")
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
             // if (response.headers['content-type'] === 'application/json') {
             //     response.data = JSON.parse(response.data, (key, value) => {
@@ -124,8 +122,6 @@ class AttachmentsBot extends ActivityHandler {
             console.log(response)
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
-            
-            context.sendActivity("4")
             context.sendActivity(res.RetCode+"1")
             if(res&&res.RetCode==0){
                 console.log(res)
@@ -179,6 +175,7 @@ class AttachmentsBot extends ActivityHandler {
                             context.sendActivity("Successfully uploaded data to myBucket/myKey")
                             var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                             var type=Util.GetCovertType(attachment.name);
+                            context.sendActivity("Successfully")
                             await Webapi.startConverting({Key:s3Name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                             function setTime(specifiedKey){
                                 Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
@@ -203,7 +200,7 @@ class AttachmentsBot extends ActivityHandler {
                                 })
     
                             }
-                          setTime({Key:name,Bucket:_bucket})
+                            setTime({Key:s3Name,Bucket:_bucket})
                         }
                     });
                   }else{
