@@ -22,7 +22,6 @@ class AttachmentsBot extends ActivityHandler {
             // Determine how the bot should process the message by checking for attachments.
             if (context.activity.attachments && context.activity.attachments.length > 0) {
                 // The user sent an attachment and the bot should handle the incoming attachment.
-                context.sendActivity({ attachments: [this.createOAuthCard()] });
                 await this.handleIncomingAttachment(context);
             } else {
                 // Since no attachment was received, send an attachment to the user.
@@ -35,13 +34,6 @@ class AttachmentsBot extends ActivityHandler {
             await next();
         });
     }
-    createOAuthCard() {
-        return CardFactory.oauthCard(
-            'OAuth connection', // Replace with the name of your Azure AD connection
-            'Sign In',
-            'BotFramework OAuth Card'
-        );
-    }
     /**
      * Saves incoming attachments to disk by calling `this.downloadAttachmentAndWrite()` and
      * responds to the user with information about the saved attachment or an error.
@@ -53,7 +45,6 @@ class AttachmentsBot extends ActivityHandler {
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
-        console.log(turnContext)
         turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
@@ -81,7 +72,6 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} attachment
      */
     async downloadAttachmentAndWrite(context,attachment) {
-        console.log(context,attachment)
         context.sendActivity("1")
         // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
@@ -118,9 +108,10 @@ class AttachmentsBot extends ActivityHandler {
         }
         try {
             // arraybuffer is necessary for images
-            context.sendActivity("3")
-            const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:"0.ASwAdwFxibZwDkqw01IX4u0bBLaHe-GTR4JPmCWhOIG6hfssANk.AQABAAIAAAB2UyzwtQEKR7-rWbgdcBZIgDN36ZXhJrXkFCT1e5M7wJZwFjj-fAnQ_jch0SxxOCqveAsojnnZBIs9ordDHdUGruY78IMCjiSaK7BC76xDH61vnLjuLB6QOM0b5Ot1WJHApzwwvgAtR5DwQHVfzhP7ckCEr1YafJvB6K8hHNyx3UNSonQ6ljbFt_je1_xYsXoByxg3Mw2XleuvEhKlWeVjwHjZVtuWYb0CzKKKQkRgyCrmQD6LYbFrwJMkHPHbW_QSqS6Ldto8WUYJQseXa9yPGpxEEYLSd4YJnS7hyb5XWfStX_Qhv2QoxM4cxuxWCaa6WVDWWlcQYfSxBjK8ZoK2VSJqK120n8qqnJzNKKy0nWgchraktE4XL-PZtquRJGhSLXolFX3-mSudmHZyf3s4zFHhpOUiDFbvtB3d_lP4RAVztSlx7qbgwG28krsdzHrqBqEBuZWkiEGl1pparI8huinCfGS9pDrBmiYtFJoMdANixN7hIUi6CtYAmMXzgo69ORqPdLG73k4Jk0hRrl9vbfnl20f_yzQJ5i0stLmKQoUl5XWsXzOKwVDhNyIPpH3iOLw3X-micCRHbxo2PozNuUF7S9Nm_atzqUrd8rqczMNxJ2c671AH6zbSl94lW2HJtLctSPYi5p3cnZFek1d2UhfnUSAFajEc4jFdJwu2TwDpXWOH04Alf9ACGPMUGtPv7DYJVEBlmVdpLkj3ctELE9ZC9XcOkMBYU4srM9xNZAAXLp70fmz090-Z5AfNObCuVqgwmUyHUnNtFJCgm-lSl7lvrko4paiG9cQXZe14pIcOQ79vsVAjyESs65zPGPNMY0yNPgVJnuCE7NSo6hVjEm-GGbSwpw52SaTU9npi0UCKOPFrRRhKus_fXLVENq2jh1Ae5CikmTmP3js6tHsIhpAeTexXlsPom69boGhvnt9p5DqRu47tPGH_EoXK0S8LcfUZiOupMfTkr98bhMPvk6GNyPZjl2Lap6d575CePXfHVCCedBiw12VzlkqQqF3SRxuKNxgJbB-1G7YeYdDv7oLOIX00UZftgXBWxDQbY_7oHXdBxipwtKZug7echUtGmDS0UajLXh1TjMiBeaJjSi_aI9jmbStgcoRMRfIqaYdQgE9fpUkPRrGtgxawmwzIyX-azFIeFqznM1DS7N5kWqrTVMrx-yxfqHMFphrfde9c838MGhXQc_K4qTI0vcz6GS1GzwPgpnTxMtQLXs9xtyUdpRFl_tGShGy7DiCVBes6FxEdjRmXWZRSCoeegCYWfIpWHiWbrgCOUE9S_q8SHFgXAy0KmW-zHif9ikssSyAA"}});
-            console.log(response.config.url)
+            
+            let botToken=await Webapi.getBotToken();
+            context.sendActivity(botToken.access_token)
+            const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:botToken.token_type+' '+botToken.access_token}});
             context.sendActivity(response.config.url)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
             context.sendActivity("444")
@@ -353,7 +344,7 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} turnContext
      */
     async getUploadedAttachment(turnContext) {
-        const imageData = fs.readFileSync(path.join(__dirname, '../resources/architecture-resize.png'));
+        const imageData = fs.readFileSync(path.join(__dirname, '../resources/123.jpg'));
         const connector = turnContext.adapter.createConnectorClient(turnContext.activity.serviceUrl);
         const conversationId = turnContext.activity.conversation.id;
         const response = await connector.conversations.uploadAttachment(conversationId, {

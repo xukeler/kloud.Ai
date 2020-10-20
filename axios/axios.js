@@ -174,5 +174,34 @@ let Webapi={
             return res_Json.RetData
         }
     },
+    async getBotToken(){
+        let data={
+            grant_type:"client_credentials",
+            client_id:"0e4e3e83-1e19-4fee-8ac4-9475d83f81f6",
+            client_secret:"Fkv0J5I.oT16v59W7..wj75-Cuqsq0be5N",
+            scope:"https://api.botframework.com/.default"
+        }
+        let str="grant_type=client_credentials&client_id=0e4e3e83-1e19-4fee-8ac4-9475d83f81f6&client_secret=Fkv0J5I.oT16v59W7..wj75-Cuqsq0be5N&scope=https://api.botframework.com/.default"
+        return new Promise((resolve,reject)=>{
+            var url="https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token";
+            request({
+                url: url,
+                method: "POST",
+                headers: {
+                    "content-type": "application/x-www-form-urlencoded",
+                },
+                body: str
+            }, function(error, response, body) {
+                if (!error&&response.statusCode == 200) {
+                    resolve(JSON.parse(body))
+                }else if(error||response.statusCode){
+                    resolve(null)
+                }
+            });    
+        }).catch((error)=>{
+            console.log(error)
+        })
+        
+    }
 }
 module.exports.Webapi=Webapi
