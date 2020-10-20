@@ -136,11 +136,11 @@ class AttachmentsBot extends ActivityHandler {
                 let ossObj=await Webapi.getOssKey();
                 var convertParam = {
                     ServiceProviderId: ossObj.Data.ServiceProviderId,
-                    RegionName: "oss-cn-shanghai",
-                    BucketName: "peertime-test",
-                    AccessKeyId:"STS.NTCAEXYaBNNajwYiMR5a2pYpW",
-                    AccessKeySecret:"7Xhn5ZNMWXp53wKUW1i7Qk2LTr9pC9FoCKsJVjSPJ2GY",
-                    SecurityToken:"CAIS+wF1q6Ft5B2yfSjIr5f2Cv/stL5j+YyKaFHojU0HOe4en5zbtTz2IHlJenZpCekXtPszlGxR6/oblqZPW7tEW0HoasBt65lR7Vn5nHlQfnDzv9I+k5SANTW5KXyShb3/AYjQSNfaZY3eCTTtnTNyxr3XbCirW0ffX7SClZ9gaKZ8PGD6F00kYu1bPQx/ssQXGGLMPPK2SH7Qj3HXEVBjt3gX6wo9y9zmm5zBsUCO0QCllLZL/NSvGPX+MZkwZqUYesyuwel7epDG1CNt8BVQ/M909vcdpGmY54HEUgMOv0XaareIq8cKNBN3Z6w3ALNcqP/1me2SSEBLLggQoRqAAQsF/FGop0bITulBjydWvSRb2LUmOIRtTQl/xU8Pat9NWl+HmpnR99HWCQNz0W1eZOJUMtrX1/Z13c9yBQ1lb1yhXrVET/UZz8D3PwooANE1IGDKjGd1YpnfnYt+d9OrhC3x2wGgPFWZgOiP6HMpTHJfYIBGCZ5cjS7rNpqh6/iK",
+                    RegionName: ossObj.Data.RegionName,
+                    BucketName: ossObj.Data.BucketName,
+                    AccessKeyId:ossObj.Data.AccessKeyId,
+                    AccessKeySecret:ossObj.Data.AccessKeySecret,
+                    SecurityToken:ossObj.Data.SecurityToken,
                   }
                   var _bucket={                    
                     ServiceProviderId: convertParam.ServiceProviderId,
@@ -148,7 +148,7 @@ class AttachmentsBot extends ActivityHandler {
                     BucketName: convertParam.BucketName,
                 }
                   context.sendActivity(convertParam.ServiceProviderId+"5")
-                  if(false){
+                  if(convertParam.ServiceProviderId==1){
                     var s3 = new AWS.S3({
                         apiVersion: '2006-03-01',
                         params: {Bucket: convertParam.BucketName},
@@ -180,14 +180,14 @@ class AttachmentsBot extends ActivityHandler {
                             context.sendActivity("Successfully uploaded data to myBucket/myKey")
                             var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                             var type=Util.GetCovertType(attachment.name);
-                            await Webapi.startConverting({Key:s3Name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
+                            test()
+                            let error=await Webapi.startConverting({Key:s3Name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
+                            context.sendActivity(error)
                             context.sendActivity("Successfully")
                             function S3setTime(specifiedKey){
-                                test()
                                 Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                     if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                        var servername=Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));;
-                                         Webapi.uploadNewFile(attachment.name,servername,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                         Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
                                             if(uploadRes){
                                                 send(uploadRes)
                                             }
@@ -221,14 +221,13 @@ class AttachmentsBot extends ActivityHandler {
                         var name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                         // object-name可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
                          await client.put(name,response.data);
-                        context.sendActivity("6")
+                        context.sendActivity(6)
                         var type=Util.GetCovertType(attachment.name);
                         await Webapi.startConverting({Key:name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                         function setTime(specifiedKey){
                             Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                 if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                    var servername=Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));;
-                                     Webapi.uploadNewFile(attachment.name,servername,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                     Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
                                         if(uploadRes){
                                             send(uploadRes)
                                         }

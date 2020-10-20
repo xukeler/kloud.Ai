@@ -88,7 +88,7 @@ let Webapi={
                 if (!error&&response.statusCode == 200) {
                     resolve(body.Data.Token)
                 }else if(error||response.statusCode){
-                    resolve(null)
+                    resolve("错误")
                 }
             }); 
         })
