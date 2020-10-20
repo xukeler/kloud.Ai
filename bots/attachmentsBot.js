@@ -113,6 +113,34 @@ class AttachmentsBot extends ActivityHandler {
             })
 
         }
+        let s3Convert=async(res,_bucket,attachment,s3Name)=>{
+            Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
+                context.sendActivity(code)
+                function S3setTime(specifiedKey){
+                    Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
+                        if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
+                             Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                if(uploadRes){
+                                    send(uploadRes)
+                                }
+                             }).catch(function (error) {
+                                console.log(error);
+                              })
+                        }else if(cresult&&cresult.Data.CurrentStatus==3){
+                            return cresult
+                        }else if(cresult){
+                            setTimeout( ()=>{
+                                setTime(specifiedKey)
+                            },2000)
+                        }
+                    }).catch((error)=>{
+
+                    })
+
+                }
+                S3setTime({Key:s3Name,Bucket:_bucket})
+            })
+        }
         try {
             // arraybuffer is necessary for images
             
@@ -187,32 +215,33 @@ class AttachmentsBot extends ActivityHandler {
                                 context.sendActivity("reg"+_bucket.RegionName)
                                 context.sendActivity("buc"+_bucket.BucketName)
                                 context.sendActivity("path"+res.RetData.Path)
-                                Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
-                                    context.sendActivity(code)
-                                    function S3setTime(specifiedKey){
-                                        Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                                            if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                                 Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
-                                                    if(uploadRes){
-                                                        send(uploadRes)
-                                                    }
-                                                 }).catch(function (error) {
-                                                    console.log(error);
-                                                  })
-                                            }else if(cresult&&cresult.Data.CurrentStatus==3){
-                                                return cresult
-                                            }else if(cresult){
-                                                setTimeout( ()=>{
-                                                    setTime(specifiedKey)
-                                                },2000)
-                                            }
-                                        }).catch((error)=>{
+                                s3Convert(res,_bucket,attachment,s3Name)
+                                // Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
+                                //     context.sendActivity(code)
+                                //     function S3setTime(specifiedKey){
+                                //         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
+                                //             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
+                                //                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                //                     if(uploadRes){
+                                //                         send(uploadRes)
+                                //                     }
+                                //                  }).catch(function (error) {
+                                //                     console.log(error);
+                                //                   })
+                                //             }else if(cresult&&cresult.Data.CurrentStatus==3){
+                                //                 return cresult
+                                //             }else if(cresult){
+                                //                 setTimeout( ()=>{
+                                //                     setTime(specifiedKey)
+                                //                 },2000)
+                                //             }
+                                //         }).catch((error)=>{
             
-                                        })
+                                //         })
             
-                                    }
-                                    S3setTime({Key:s3Name,Bucket:_bucket})
-                                })
+                                //     }
+                                //     S3setTime({Key:s3Name,Bucket:_bucket})
+                                // })
     
                                 context.sendActivity("Successfully")
     
