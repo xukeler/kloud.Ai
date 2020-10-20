@@ -181,11 +181,11 @@ class AttachmentsBot extends ActivityHandler {
                             context.sendActivity("Successfully uploaded data to myBucket/myKey")
                             var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                             var S3type=Util.GetCovertType(attachment.name);
-                            context.sendActivity(s3Name)
+                            context.sendActivity("s3"+s3Name)
                             context.sendActivity(S3type)
-                            context.sendActivity(_bucket.RegionName)
-                            context.sendActivity(_bucket.BucketName)
-                            context.sendActivity(res.RetData.Path)
+                            context.sendActivity("reg"+_bucket.RegionName)
+                            context.sendActivity("buc"+_bucket.BucketName)
+                            context.sendActivity("path"+res.RetData.Path)
                             let error=await Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                             context.sendActivity(error)
                             context.sendActivity("Successfully")
