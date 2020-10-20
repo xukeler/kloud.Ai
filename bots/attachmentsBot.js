@@ -116,11 +116,36 @@ class AttachmentsBot extends ActivityHandler {
         let s3Convert=async(res,_bucket,attachment,s3Name)=>{
             for (const conversationReference of Object.values(conversationReferences)) {
                 await adapter.continueConversation(conversationReference, async turnContext => {
-                    await turnContext.sendActivity(Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}));
+                    await turnContext.sendActivity(Webapi.returnText());
                 });
             }
-            
-            Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then(async(code)=>{
+            var url="https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting";
+            let data={Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}
+            request({
+                url: url,
+                method: "POST",
+                rejectUnauthorized: false,
+                json: true,
+                headers: {
+                    "content-type": "application/json",
+                    "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
+                },
+                body: data
+            }, function(error, response, body) {
+                for (const conversationReference of Object.values(conversationReferences)) {
+                    await adapter.continueConversation(conversationReference, async turnContext => {
+                        await turnContext.sendActivity(response.statusCode);
+                    });
+                }
+                // resolve(response.statusCode)
+                // if (!error&&response.statusCode == 200) {
+                //     resolve(body.Data.Token)
+                // }else if(error||response.statusCode){
+                //     resolve("错误")
+                // }
+            }); 
+            return
+            await Webapi.startConverting().then(async(code)=>{
                 for (const conversationReference of Object.values(conversationReferences)) {
                     await adapter.continueConversation(conversationReference, async turnContext => {
                         await turnContext.sendActivity("开始转换3333");
