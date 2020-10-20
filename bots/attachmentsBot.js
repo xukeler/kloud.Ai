@@ -119,7 +119,7 @@ class AttachmentsBot extends ActivityHandler {
         try {
             // arraybuffer is necessary for images
             context.sendActivity("3")
-            const response = await axios.get(url, { responseType: 'arraybuffer' });
+            const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:"8a9e21b1-f121-4712-8d41-c0b1060c7cb7"}});
             console.log(response.config.url)
             context.sendActivity(response.config.url)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))

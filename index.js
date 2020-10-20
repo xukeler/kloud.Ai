@@ -32,10 +32,6 @@ const adapter = new BotFrameworkAdapter({
     channelService: process.env.ChannelService,
     openIdMetadata: process.env.BotOpenIdMetadata
 });
-console.log({    appId: process.env.MicrosoftAppId,
-    appPassword: process.env.MicrosoftAppPassword,
-    channelService: process.env.ChannelService,
-    openIdMetadata: process.env.BotOpenIdMetadata})
 
 // Catch-all for errors.
 const onTurnErrorHandler = async (context, error) => {
