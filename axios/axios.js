@@ -73,7 +73,7 @@ let Webapi={
     returnText(){
         return "为啥不执行"
     },
-    async startConverting(data){
+    startConverting(data){
         return new Promise((resolve, reject)=>{
             var url="https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting";
             request({
