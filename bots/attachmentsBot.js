@@ -172,51 +172,56 @@ class AttachmentsBot extends ActivityHandler {
                         Bucket: s3.config.params.Bucket,
                         Key: attachment.name,
                         Body: response.data
-                      }
-                      s3.putObject(params, async (perr, pres)=> {
-                        if (perr) {
-                            console.log("Error uploading data: ", perr);
-                        } else {
-                            console.log("Successfully uploaded data to myBucket/myKey");
-                            context.sendActivity("Successfully uploaded data to myBucket/myKey")
-                            var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
-                            var S3type=Util.GetCovertType(attachment.name);
-                            context.sendActivity("key"+s3Name)
-                            context.sendActivity(S3type)
-                            context.sendActivity("reg"+_bucket.RegionName)
-                            context.sendActivity("buc"+_bucket.BucketName)
-                            context.sendActivity("path"+res.RetData.Path)
-                            Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
-                                context.sendActivity(code)
-                                function S3setTime(specifiedKey){
-                                    Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                                        if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                             Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
-                                                if(uploadRes){
-                                                    send(uploadRes)
-                                                }
-                                             }).catch(function (error) {
-                                                console.log(error);
-                                              })
-                                        }else if(cresult&&cresult.Data.CurrentStatus==3){
-                                            return cresult
-                                        }else if(cresult){
-                                            setTimeout( ()=>{
-                                                setTime(specifiedKey)
-                                            },2000)
-                                        }
-                                    }).catch((error)=>{
-        
-                                    })
-        
-                                }
-                                S3setTime({Key:s3Name,Bucket:_bucket})
+                      };
+                      try{
+                        s3.putObject(params, async (perr, pres)=> {
+                            if (perr) {
+                                console.log("Error uploading data: ", perr);
+                            } else {
+                                console.log("Successfully uploaded data to myBucket/myKey");
+                                context.sendActivity("Successfully uploaded data to myBucket/myKey")
+                                var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
+                                var S3type=Util.GetCovertType(attachment.name);
+                                context.sendActivity("key"+s3Name)
+                                context.sendActivity(S3type)
+                                context.sendActivity("reg"+_bucket.RegionName)
+                                context.sendActivity("buc"+_bucket.BucketName)
+                                context.sendActivity("path"+res.RetData.Path)
+                                Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
+                                    context.sendActivity(code)
+                                    function S3setTime(specifiedKey){
+                                        Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
+                                            if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
+                                                 Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                                    if(uploadRes){
+                                                        send(uploadRes)
+                                                    }
+                                                 }).catch(function (error) {
+                                                    console.log(error);
+                                                  })
+                                            }else if(cresult&&cresult.Data.CurrentStatus==3){
+                                                return cresult
+                                            }else if(cresult){
+                                                setTimeout( ()=>{
+                                                    setTime(specifiedKey)
+                                                },2000)
+                                            }
+                                        }).catch((error)=>{
+            
+                                        })
+            
+                                    }
+                                    S3setTime({Key:s3Name,Bucket:_bucket})
+                                })
+    
+                                context.sendActivity("Successfully")
+    
+                            }
                             })
-
-                            context.sendActivity("Successfully")
-
-                        }
-                    });
+                      }catch(e){
+                        context.sendActivity(e)
+                        console.log("失败",e);
+                      }
                   }else{
                     var client  =new oss({
                         region: convertParam.RegionName,
