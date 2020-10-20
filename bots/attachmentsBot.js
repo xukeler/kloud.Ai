@@ -131,7 +131,7 @@ class AttachmentsBot extends ActivityHandler {
                 console.log(res)
             }
             if(res&&res.RetCode==-6002){
-                context.sendActivity(5)
+                
                 let ossObj=await Webapi.getOssKey();
                 var convertParam = {
                     ServiceProviderId: ossObj.Data.ServiceProviderId,
@@ -141,7 +141,7 @@ class AttachmentsBot extends ActivityHandler {
                     AccessKeySecret:ossObj.Data.AccessKeySecret,
                     SecurityToken:ossObj.Data.SecurityToken,
                   }
-
+                  context.sendActivity(convertParam.ServiceProviderId+"5")
                   if(convertParam.ServiceProviderId==1){
                     var s3 = new AWS.S3({
                         apiVersion: '2006-03-01',
@@ -162,7 +162,7 @@ class AttachmentsBot extends ActivityHandler {
                         httpOptions:{timeout:600000}
                       });
                       var params = {
-                        Bucket: this.s3.config.params.Bucket,
+                        Bucket: s3.config.params.Bucket,
                         Key: attachment.name,
                         Body: response.data
                       }
