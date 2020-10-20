@@ -54,7 +54,7 @@ class AttachmentsBot extends ActivityHandler {
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
         console.log(turnContext)
-        turnContext.sendActivity(turnContext.activity.attachments[0].name)
+        turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
         // Replies back to the user with information about where the attachment is stored on the bot's server,
