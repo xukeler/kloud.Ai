@@ -171,7 +171,7 @@ class AttachmentsBot extends ActivityHandler {
                         Key: attachment.name,
                         Body: response.data
                       }
-                      s3.putObject(params, function (perr, pres) {
+                      s3.putObject(params, async (perr, pres)=> {
                         if (perr) {
                             console.log("Error uploading data: ", perr);
                         } else {
