@@ -9,7 +9,7 @@ class EchoBot extends ActivityHandler {
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
             let res="";
-            if(context.activity.channelId=="skype"){
+            if(context.activity.channelId){
                 res= await Webapi.getSkypeToken(encodeURIComponent(context.activity.from.id));
             }else{
                 res= await Webapi.getTeamsToken(encodeURIComponent(context.activity.from.id));

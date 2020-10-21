@@ -42,24 +42,23 @@ class AttachmentsBot extends ActivityHandler {
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
         if(!token) return
-        turnContext.sendActivity(token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
-        turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
+        // turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
         async function replyForReceivedAttachments(localAttachmentData) {
-            if (localAttachmentData) {
-                // Because the TurnContext was bound to this function, the bot can call
-                // `TurnContext.sendActivity` via `this.sendActivity`;
-                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-                    `has been received and saved to "${ localAttachmentData.localPath }".`);
-            } else {
-                await this.sendActivity('Attachment was not successfully saved to disk.');
-            }
+            // if (localAttachmentData) {
+            //     // Because the TurnContext was bound to this function, the bot can call
+            //     // `TurnContext.sendActivity` via `this.sendActivity`;
+            //     await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+            //         `has been received and saved to "${ localAttachmentData.localPath }".`);
+            // } else {
+            //     await this.sendActivity('Attachment was not successfully saved to disk.');
+            // }
         }
 
         // Prepare Promises to reply to the user with information about saved attachments.
@@ -88,7 +87,6 @@ class AttachmentsBot extends ActivityHandler {
             }
         }
         let send=(uploadRes)=>{
-            test("getId")
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
@@ -118,10 +116,9 @@ class AttachmentsBot extends ActivityHandler {
             // arraybuffer is necessary for images
             
             let botToken=await Webapi.getBotToken();
-            context.sendActivity(botToken.access_token)
+            // context.sendActivity(botToken.access_token)
             const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:botToken.token_type+' '+botToken.access_token}});
-            context.sendActivity(response.config.url)
-            let  fileSize=parseInt(parseInt(response.headers['content-length']))
+            // context.sendActivity(response.config.url)
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
             // if (response.headers['content-type'] === 'application/json') {
             //     response.data = JSON.parse(response.data, (key, value) => {
@@ -149,7 +146,6 @@ class AttachmentsBot extends ActivityHandler {
                     RegionName: convertParam.RegionName,
                     BucketName: convertParam.BucketName,
                 }
-                  context.sendActivity(convertParam.ServiceProviderId+"5")
                   if(convertParam.ServiceProviderId==1){
                     var s3 = new AWS.S3({
                         apiVersion: '2006-03-01',
@@ -180,26 +176,17 @@ class AttachmentsBot extends ActivityHandler {
                             if (perr) {
                                 console.log("Error uploading data: ", perr);
                             } else {
-                                console.log("Successfully uploaded data to myBucket/myKey");
-                                context.sendActivity("Successfully uploaded data to myBucket/myKey")
                                 var S3type=Util.GetCovertType(attachment.name);
-                                context.sendActivity("key"+s3Name)
-                                context.sendActivity(S3type)
-                                context.sendActivity("reg"+_bucket.RegionName)
-                                context.sendActivity("buc"+_bucket.BucketName)
-                                context.sendActivity("path"+res.RetData.Path)
+                                // context.sendActivity("key"+s3Name)
+                                // context.sendActivity(S3type)
+                                // context.sendActivity("reg"+_bucket.RegionName)
+                                // context.sendActivity("buc"+_bucket.BucketName)
+                                // context.sendActivity("path"+res.RetData.Path)
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
                                     function S3setTime(specifiedKey){
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                                            test("开始转换"+cresult.Success)
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                                 test("转换成功")
-                                                test(attachment.name)
-                                                test(cresult.Data.Result.FileName)
-                                                test(res.RetData.FileID+"id")
-                                                test(cresult.Data.Result.Count+"count")
-                                                test(hash)
-                                                test(cresult.Data.Result.FileSize+"size")
                                                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,cresult.Data.Result.FileSize).then((uploadRes)=>{
                                                     if(uploadRes){
                                                         send(uploadRes)
@@ -212,9 +199,7 @@ class AttachmentsBot extends ActivityHandler {
                                                 test("装换失败"+cresult.Data.CurrentStatus)
                                                 return cresult
                                             }else if(cresult){
-                                                test("timeouteffff")
                                                 setTimeout( ()=>{
-                                                    test("timeout")
                                                     S3setTime(specifiedKey)
                                                 },2000)
                                             }
@@ -252,7 +237,7 @@ class AttachmentsBot extends ActivityHandler {
                         function setTime(specifiedKey){
                             Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                 if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                     Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                     Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,cresult.Data.Result.FileSize).then((uploadRes)=>{
                                         if(uploadRes){
                                             send(uploadRes)
                                         }
@@ -277,6 +262,7 @@ class AttachmentsBot extends ActivityHandler {
                       }
                   }
             }else if(res&&res.RetCode==-6003){
+                context.sendActivity("文件已经存在")
                 return 1 //上传文件已经存在
             }
         } catch (error) {
