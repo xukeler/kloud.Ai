@@ -89,6 +89,8 @@ class AttachmentsBot extends ActivityHandler {
         }
         let send=(uploadRes)=>{
             test("getId")
+            test(uploadRes.AttachmentID+"")
+            test(uploadRes.Title+"")
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
