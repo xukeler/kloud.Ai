@@ -42,7 +42,7 @@ class AttachmentsBot extends ActivityHandler {
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
         if(!token) return
-        // turnContext.sendActivity(token)
+        turnContext.sendActivity(token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
@@ -52,14 +52,14 @@ class AttachmentsBot extends ActivityHandler {
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
         async function replyForReceivedAttachments(localAttachmentData) {
-            if (localAttachmentData) {
-                // Because the TurnContext was bound to this function, the bot can call
-                // `TurnContext.sendActivity` via `this.sendActivity`;
-                // await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-                //     `has been received and saved to "${ localAttachmentData.localPath }".`);
-            } else {
-                // await this.sendActivity('Attachment was not successfully saved to disk.');
-            }
+            // if (localAttachmentData) {
+            //     // Because the TurnContext was bound to this function, the bot can call
+            //     // `TurnContext.sendActivity` via `this.sendActivity`;
+            //     await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+            //         `has been received and saved to "${ localAttachmentData.localPath }".`);
+            // } else {
+            //     await this.sendActivity('Attachment was not successfully saved to disk.');
+            // }
         }
 
         // Prepare Promises to reply to the user with information about saved attachments.
@@ -117,7 +117,7 @@ class AttachmentsBot extends ActivityHandler {
             // arraybuffer is necessary for images
             
             let botToken=await Webapi.getBotToken();
-            // context.sendActivity(botToken.access_token)
+            context.sendActivity(botToken.access_token)
             const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:botToken.token_type+' '+botToken.access_token}});
             context.sendActivity(response.config.url)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
@@ -148,7 +148,7 @@ class AttachmentsBot extends ActivityHandler {
                     RegionName: convertParam.RegionName,
                     BucketName: convertParam.BucketName,
                 }
-                //   context.sendActivity(convertParam.ServiceProviderId+"5")
+                  context.sendActivity(convertParam.ServiceProviderId+"5")
                   if(convertParam.ServiceProviderId==1){
                     var s3 = new AWS.S3({
                         apiVersion: '2006-03-01',
@@ -179,17 +179,18 @@ class AttachmentsBot extends ActivityHandler {
                             if (perr) {
                                 console.log("Error uploading data: ", perr);
                             } else {
-
+                                console.log("Successfully uploaded data to myBucket/myKey");
+                                context.sendActivity("Successfully uploaded data to myBucket/myKey")
                                 var S3type=Util.GetCovertType(attachment.name);
-                                // context.sendActivity("key"+s3Name)
-                                // context.sendActivity(S3type)
-                                // context.sendActivity("reg"+_bucket.RegionName)
-                                // context.sendActivity("buc"+_bucket.BucketName)
-                                // context.sendActivity("path"+res.RetData.Path)
+                                context.sendActivity("key"+s3Name)
+                                context.sendActivity(S3type)
+                                context.sendActivity("reg"+_bucket.RegionName)
+                                context.sendActivity("buc"+_bucket.BucketName)
+                                context.sendActivity("path"+res.RetData.Path)
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
                                     function S3setTime(specifiedKey){
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                                            // test("开始转换"+cresult.Success)
+                                            test("开始转换")
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                                 test("转换成功")
                                                 // test(attachment.name)
