@@ -193,6 +193,7 @@ class AttachmentsBot extends ActivityHandler {
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                             test("开始转换"+cresult.Success)
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
+                                                test("转换成功")
                                                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
                                                     if(uploadRes){
                                                         send(uploadRes)
@@ -202,9 +203,12 @@ class AttachmentsBot extends ActivityHandler {
                                                     console.log(error);
                                                   })
                                             }else if(cresult&&cresult.Data.CurrentStatus==3){
+                                                test("装换失败"+cresult.Data.CurrentStatus)
                                                 return cresult
                                             }else if(cresult){
+                                                test("timeouteffff")
                                                 setTimeout( ()=>{
+                                                    test("timeout")
                                                     setTime(specifiedKey)
                                                 },2000)
                                             }
