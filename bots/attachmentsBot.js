@@ -94,6 +94,8 @@ class AttachmentsBot extends ActivityHandler {
             test(buf.toString('base64'))
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
+                   let flag= await Webapi.updateLesson(idObj.LessonID);
+                   test(flag+"")
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
                     const reply = { type: ActivityTypes.Message };
                     const buttons = [

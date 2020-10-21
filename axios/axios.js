@@ -159,6 +159,17 @@ let Webapi={
             return res_Json.RetCode
         }
     },
+    async updateLesson(id){
+        var url =  "Lesson/UpgradeToNormalLesson?lessonID="+id;
+        var result = await this.postAjax(url, obj);
+        let res_Json=eval('(' + result + ')')
+        if (!res_Json)
+        {
+            return false;
+        } else if(res_Json&&res_Json.RetCode==0) {
+            return true
+        }
+    },
     async getBotToken(){
         let data={
             grant_type:"client_credentials",
