@@ -209,7 +209,7 @@ class AttachmentsBot extends ActivityHandler {
                                                 test("timeouteffff")
                                                 setTimeout( ()=>{
                                                     test("timeout")
-                                                    setTime(specifiedKey)
+                                                    S3setTime(specifiedKey)
                                                 },2000)
                                             }
                                         }).catch((error)=>{
