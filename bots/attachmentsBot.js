@@ -41,25 +41,24 @@ class AttachmentsBot extends ActivityHandler {
      */
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
-        // if(!token) return
+        if(!token) return
         turnContext.sendActivity("token"+token)
-        await Webapi.setToken("44b2546c-49c0-426d-b0f2-27f7f6d69c85")
+        await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
-        turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
         async function replyForReceivedAttachments(localAttachmentData) {
-            if (localAttachmentData) {
-                // Because the TurnContext was bound to this function, the bot can call
-                // `TurnContext.sendActivity` via `this.sendActivity`;
-                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-                    `has been received and saved to "${ localAttachmentData.localPath }".`);
-            } else {
-                await this.sendActivity('Attachment was not successfully saved to disk.');
-            }
+            // if (localAttachmentData) {
+            //     // Because the TurnContext was bound to this function, the bot can call
+            //     // `TurnContext.sendActivity` via `this.sendActivity`;
+            //     await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+            //         `has been received and saved to "${ localAttachmentData.localPath }".`);
+            // } else {
+            //     await this.sendActivity('Attachment was not successfully saved to disk.');
+            // }
         }
 
         // Prepare Promises to reply to the user with information about saved attachments.
@@ -89,6 +88,8 @@ class AttachmentsBot extends ActivityHandler {
         }
         let send=(uploadRes)=>{
             test(uploadRes.AttachmentID+"")
+            const buf = Buffer.from(uploadRes.Title, 'utf8');
+            test(buf.toString('base64'))
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                    let flag= await Webapi.updateLesson(idObj.LessonID);
