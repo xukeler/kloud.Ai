@@ -80,6 +80,13 @@ class AttachmentsBot extends ActivityHandler {
         conversationReferences[conversationReference.conversation.id] = conversationReference;
         // Local file path for the bot to save the attachment.
         const localFileName = path.join(__dirname, attachment.name);
+        let test=async (res)=>{
+            for (const conversationReference of Object.values(conversationReferences)) {
+                await adapter.continueConversation(conversationReference, async turnContext => {
+                    await turnContext.sendActivity(res);
+                });
+            }
+        }
         let send=(uploadRes)=>{
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
@@ -182,6 +189,7 @@ class AttachmentsBot extends ActivityHandler {
                                 context.sendActivity("path"+res.RetData.Path)
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
                                     function S3setTime(specifiedKey){
+                                        test("开始转换")
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
@@ -189,6 +197,7 @@ class AttachmentsBot extends ActivityHandler {
                                                         send(uploadRes)
                                                     }
                                                  }).catch(function (error) {
+                                                    test(error)
                                                     console.log(error);
                                                   })
                                             }else if(cresult&&cresult.Data.CurrentStatus==3){
