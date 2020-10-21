@@ -46,20 +46,20 @@ class AttachmentsBot extends ActivityHandler {
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
-        // turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
+        turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
         async function replyForReceivedAttachments(localAttachmentData) {
-            // if (localAttachmentData) {
-            //     // Because the TurnContext was bound to this function, the bot can call
-            //     // `TurnContext.sendActivity` via `this.sendActivity`;
-            //     await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-            //         `has been received and saved to "${ localAttachmentData.localPath }".`);
-            // } else {
-            //     await this.sendActivity('Attachment was not successfully saved to disk.');
-            // }
+            if (localAttachmentData) {
+                // Because the TurnContext was bound to this function, the bot can call
+                // `TurnContext.sendActivity` via `this.sendActivity`;
+                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+                    `has been received and saved to "${ localAttachmentData.localPath }".`);
+            } else {
+                await this.sendActivity('Attachment was not successfully saved to disk.');
+            }
         }
 
         // Prepare Promises to reply to the user with information about saved attachments.
@@ -88,6 +88,7 @@ class AttachmentsBot extends ActivityHandler {
             }
         }
         let send=(uploadRes)=>{
+            test("getId")
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
@@ -190,15 +191,15 @@ class AttachmentsBot extends ActivityHandler {
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
                                     function S3setTime(specifiedKey){
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                                            test("开始转换")
+                                            test("开始转换"+cresult.Success)
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                                 test("转换成功")
-                                                // test(attachment.name)
-                                                // test(cresult.Data.Result.FileName)
-                                                // test(res.RetData.FileID+"id")
-                                                // test(cresult.Data.Result.Count+"count")
-                                                // test(hash)
-                                                // test(cresult.Data.Result.FileSize+"size")
+                                                test(attachment.name)
+                                                test(cresult.Data.Result.FileName)
+                                                test(res.RetData.FileID+"id")
+                                                test(cresult.Data.Result.Count+"count")
+                                                test(hash)
+                                                test(cresult.Data.Result.FileSize+"size")
                                                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,cresult.Data.Result.FileSize).then((uploadRes)=>{
                                                     if(uploadRes){
                                                         send(uploadRes)
@@ -211,9 +212,9 @@ class AttachmentsBot extends ActivityHandler {
                                                 test("装换失败"+cresult.Data.CurrentStatus)
                                                 return cresult
                                             }else if(cresult){
-                                                // test("timeouteffff")
+                                                test("timeouteffff")
                                                 setTimeout( ()=>{
-                                                    // test("timeout")
+                                                    test("timeout")
                                                     S3setTime(specifiedKey)
                                                 },2000)
                                             }
