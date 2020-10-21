@@ -41,7 +41,7 @@ class AttachmentsBot extends ActivityHandler {
      */
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
-        // if(!token) return
+        if(!token) return
         turnContext.sendActivity("token"+token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
@@ -99,10 +99,16 @@ class AttachmentsBot extends ActivityHandler {
                     const buttons = [
                         { type: ActionTypes.OpenUrl, title: 'start meeting ', value: meetingUrl },
                     ];
-                    let imgUrl=uploadRes.AttachmentUrl?Util.getcoverUrl(uploadRes.AttachmentUrl):"https:www.xukeler.cn/logo.png";
+                    let imgUrl="";
+                    if(uploadRes.AttachmentUrl){
+                        imgUrl=Util.getcoverUrl(uploadRes.AttachmentUrl);
+                    }else{
+                        imgUrl="https:www.xukeler.cn/logo.png"
+                    }
                     test(imgUrl)
                     const img=[{url: imgUrl,}]
-                    const card = CardFactory.heroCard('',"ererer",buttons); 
+                    const card = CardFactory.heroCard('', img,
+                        buttons); 
                     reply.attachments = [card];
 
                     test(reply)
