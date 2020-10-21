@@ -9,6 +9,8 @@ const {Util}=require("../axios/util");
 const { Webapi } = require('../axios/axios');
 const AWS=require("aws-sdk")
 var oss = require('ali-oss');
+const util = require('util');
+const setTimeoutPromise = util.promisify(setTimeout);
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword,
@@ -87,6 +89,9 @@ class AttachmentsBot extends ActivityHandler {
                 });
             }
         }
+        setTimeoutPromise(2000,"test").then((value)=>{
+            test(value)
+        })
         let send=(uploadRes)=>{
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
