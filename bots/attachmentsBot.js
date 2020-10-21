@@ -45,7 +45,7 @@ class AttachmentsBot extends ActivityHandler {
         // turnContext.sendActivity(token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
-        // turnContext.sendActivity("文件上传转换中...")
+        turnContext.sendActivity("文件上传转换中...")
         // turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
@@ -119,7 +119,7 @@ class AttachmentsBot extends ActivityHandler {
             let botToken=await Webapi.getBotToken();
             // context.sendActivity(botToken.access_token)
             const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:botToken.token_type+' '+botToken.access_token}});
-            // context.sendActivity(response.config.url)
+            context.sendActivity(response.config.url)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
             // if (response.headers['content-type'] === 'application/json') {
@@ -129,7 +129,7 @@ class AttachmentsBot extends ActivityHandler {
             // }
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
-            // context.sendActivity(res.RetCode+"1")
+            context.sendActivity(res.RetCode+"1")
             if(res&&res.RetCode==0){
                 console.log(res)
             }
@@ -191,7 +191,7 @@ class AttachmentsBot extends ActivityHandler {
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                             // test("开始转换"+cresult.Success)
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                                // test("转换成功")
+                                                test("转换成功")
                                                 // test(attachment.name)
                                                 // test(cresult.Data.Result.FileName)
                                                 // test(res.RetData.FileID+"id")
