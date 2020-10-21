@@ -127,7 +127,7 @@ class AttachmentsBot extends ActivityHandler {
             // }
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
-            context.sendActivity(res.RetCode+"1")
+            // context.sendActivity(res.RetCode+"1")
             if(res&&res.RetCode==0){
                 console.log(res)
             }
@@ -177,12 +177,13 @@ class AttachmentsBot extends ActivityHandler {
                                 console.log("Error uploading data: ", perr);
                             } else {
                                 var S3type=Util.GetCovertType(attachment.name);
-                                // context.sendActivity("key"+s3Name)
-                                // context.sendActivity(S3type)
-                                // context.sendActivity("reg"+_bucket.RegionName)
-                                // context.sendActivity("buc"+_bucket.BucketName)
-                                // context.sendActivity("path"+res.RetData.Path)
+                                context.sendActivity("key"+s3Name)
+                                context.sendActivity(S3type)
+                                context.sendActivity("reg"+_bucket.RegionName)
+                                context.sendActivity("buc"+_bucket.BucketName)
+                                context.sendActivity("path"+res.RetData.Path)
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
+                                    test("开始转换")
                                     function S3setTime(specifiedKey){
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
