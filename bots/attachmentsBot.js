@@ -106,7 +106,7 @@ class AttachmentsBot extends ActivityHandler {
                         imgUrl="https:www.xukeler.cn/logo.png"
                     }
                     test(imgUrl)
-                    const img=[{url: imgUrl,}]
+                    const img=[{url: "https:www.xukeler.cn/logo.png"}]
                     const card = CardFactory.heroCard('', img,
                         buttons); 
                     reply.attachments = [card];
