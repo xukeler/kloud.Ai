@@ -5,22 +5,6 @@ axios.defaults.headers.authorization = 'Bearer 01427aa4-396e-44b7-82ab-84d802099
 const Https =require("https");
 const { resolve } = require('path');
 var request = require('request');
-axios.interceptors.request.use(function (config) {
-    // 在发送请求之前做些什么
-    if (process.env.NODE_ENV === 'development') { // 开发环境，取消https证书校验
-        config.httpsAgent = agent;
-      }
-    return config;
-  }, function (error) {
-    // 对请求错误做些什么
-    return Promise.reject(error);
-  });
-
-const agent = new Https.Agent({  
-    rejectUnauthorized: false
-})
-    
-
 let Webapi={
     getAjax(url){
         return new Promise((resolve, reject) => {
@@ -42,7 +26,6 @@ let Webapi={
                 resolve(res.data);
             }).catch(err =>
             {
-                console.log(err)
                 resolve(null);
             });
         });

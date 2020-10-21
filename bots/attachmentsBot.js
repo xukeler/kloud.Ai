@@ -9,7 +9,6 @@ const {Util}=require("../axios/util");
 const { Webapi } = require('../axios/axios');
 const AWS=require("aws-sdk")
 var oss = require('ali-oss');
-const { constants } = require('buffer');
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword,
@@ -74,8 +73,8 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} attachment
      */
     async downloadAttachmentAndWrite(context,attachment) {
-       
-        let testData={
+        // Retrieve the attachment via the attachment's contentUrl.
+        let testObj={
             "Key":"P49/Attachment/D80854/c8522fd8-5081-36bd-2c7a-2f7756399740.docx",
             "DocumentType":"docx",
             "Bucket":{
@@ -85,14 +84,11 @@ class AttachmentsBot extends ActivityHandler {
             },
             "TargetFolderKey":"P49/Attachment/D80854"
         }
-        Webapi.postAjax("https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting",testData).then((res)=>{
-            console.log(res)
-            context.sendActivity(res.Error.ErrorMessage)
-        })
-        return
-        // let testRes = await axios.get("", { headers:{ "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",},params:testData});
+        let lastData=await Webapi.postAjax("https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting",testObj);
+        context.sendActivity(lastData.Error.ErrorMessage+"5454")
+        // let testRes=await axios.get( { responseType: 'json' ,headers:{authorization:'Bearer 01427aa4-396e-44b7-82ab-84d802099bb0'},params:testObj});
+        
         // console.log(testRes)
-        // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
         const conversationReference = TurnContext.getConversationReference(context.activity);
         let conversationReferences={};
