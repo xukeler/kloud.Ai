@@ -51,14 +51,14 @@ class AttachmentsBot extends ActivityHandler {
         // Replies back to the user with information about where the attachment is stored on the bot's server,
         // and what the name of the saved file is.
         async function replyForReceivedAttachments(localAttachmentData) {
-            // if (localAttachmentData) {
-            //     // Because the TurnContext was bound to this function, the bot can call
-            //     // `TurnContext.sendActivity` via `this.sendActivity`;
-            //     await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-            //         `has been received and saved to "${ localAttachmentData.localPath }".`);
-            // } else {
-            //     await this.sendActivity('Attachment was not successfully saved to disk.');
-            // }
+            if (localAttachmentData) {
+                // Because the TurnContext was bound to this function, the bot can call
+                // `TurnContext.sendActivity` via `this.sendActivity`;
+                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+                    `has been received and saved to "${ localAttachmentData.localPath }".`);
+            } else {
+                await this.sendActivity('Attachment was not successfully saved to disk.');
+            }
         }
 
         // Prepare Promises to reply to the user with information about saved attachments.
