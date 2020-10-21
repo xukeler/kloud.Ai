@@ -103,10 +103,10 @@ class AttachmentsBot extends ActivityHandler {
                     if(uploadRes.AttachmentUrl){
                         imgUrl=Util.getcoverUrl(uploadRes.AttachmentUrl);
                     }else{
-                        imgUrl="https:www.xukeler.cn/logo.png"
+                        imgUrl="https://peertime-test.oss-cn-shanghai.aliyuncs.com/P49/Attachment/D80912/ed3c7e5d-8ce8-4fda-b002-9432f8dee6bb_1_4K.jpg"
                     }
                     test(imgUrl)
-                    const img=[{url:"https://peertime-test.oss-cn-shanghai.aliyuncs.com/P49/Attachment/D80912/ed3c7e5d-8ce8-4fda-b002-9432f8dee6bb_1_4K.jpg"}]
+                    const img=[{url:imgUrl}]
                     const card = CardFactory.heroCard('', img,
                         buttons); 
                     reply.attachments = [card];
