@@ -196,11 +196,11 @@ class AttachmentsBot extends ActivityHandler {
                                                 test("转换成功")
                                                 test(attachment.name)
                                                 test(cresult.Data.Result.FileName)
-                                                test(res.RetData.FileID+"gggg")
-                                                test(cresult.Data.Result.Count+"gggg")
+                                                test(res.RetData.FileID+"id")
+                                                test(cresult.Data.Result.Count+"count")
                                                 test(hash)
-                                                test(fileSize+"gggg")
-                                                 Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                                test(cresult.Data.Result.FileSize+"size")
+                                                 Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,cresult.Data.Result.FileSize).then((uploadRes)=>{
                                                     if(uploadRes){
                                                         send(uploadRes)
                                                     }
