@@ -4,7 +4,6 @@
 const { ActivityHandler, ActionTypes, ActivityTypes, CardFactory, ConversationState,TurnContext ,BotFrameworkAdapter} = require('botbuilder');
 const path = require('path');
 const axios = require('axios');
-require("ssl-root-cas").inject()
 const fs = require('fs');
 const {Util}=require("../axios/util");
 const { Webapi } = require('../axios/axios');
@@ -84,7 +83,7 @@ class AttachmentsBot extends ActivityHandler {
             },
             "TargetFolderKey":"P49/Attachment/D80854"
         }
-       let lastData= await axios.post("https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting", { responseType: 'json' ,headers:{authorization:"Bearer  01427aa4-396e-44b7-82ab-84d802099bb0"},params:test1});
+       let lastData= await axios.post("https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting", { responseType: 'json' ,headers:{authorization:"Bearer  01427aa4-396e-44b7-82ab-84d802099bb0",strictSSL:false},params:test1});
        context.sendActivity(lastData.Success)
        // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
