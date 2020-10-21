@@ -74,50 +74,29 @@ let Webapi={
     returnText(){
         return "为啥不执行"
     },
-    startConverting(data){
-        return new Promise((resolve, reject)=>{
-            var url="https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting";
-            request({
-                url: url,
-                method: "POST",
-                rejectUnauthorized: false,
-                json: true,
-                headers: {
-                    "content-type": "application/json",
-                    "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
-                },
-                body: data
-            }, function(error, response, body) {
-                resolve(response.statusCode)
-                if (!error&&response.statusCode == 200) {
-                    resolve(body.Data.Token)
-                }else if(error||response.statusCode){
-                    resolve("错误")
-                }
-            }); 
-        })
+    async startConverting(data){
+        var url= "https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting"
+        var result = await this.postAjax(url,data);
+        if(!result)
+        {
+            return null;
+        }
+        else
+        {
+            return result;
+        }
     },
     async queryConvertPercentage(data){
-        return new Promise((resolve,reject)=>{
-            var url="https://livedoc.peertime.cn/TxLiveDocumentApi/api/queryConverting";
-            request({
-                url: url,
-                method: "POST",
-                rejectUnauthorized: false,
-                json: true,
-                headers: {
-                    "content-type": "application/json",
-                    "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
-                },
-                body: data
-            }, function(error, response, body) {
-                if (!error&&response.statusCode == 200) {
-                    resolve(body)
-                }else if(error||response.statusCode){
-                    resolve(null)
-                }
-            });             
-        })
+        var url= "https://livedoc.peertime.cn/TxLiveDocumentApi/api/queryConverting"
+        var result = await this.postAjax(url,data);
+        if(!result)
+        {
+            return null;
+        }
+        else
+        {
+            return result;
+        }
     },
     getOssKey(){
         return new Promise((resolve, reject)=>{

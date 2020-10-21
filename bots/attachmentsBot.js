@@ -74,34 +74,12 @@ class AttachmentsBot extends ActivityHandler {
      */
     async downloadAttachmentAndWrite(context,attachment) {
         // Retrieve the attachment via the attachment's contentUrl.
-        let testObj={
-            "Key":"P49/Attachment/D80854/c8522fd8-5081-36bd-2c7a-2f7756399740.docx",
-            "DocumentType":"docx",
-            "Bucket":{
-                "ServiceProviderId":1,
-                "RegionName":"us-west-1",
-                "BucketName":"txlivedoc1b2"
-            },
-            "TargetFolderKey":"P49/Attachment/D80854"
-        }
-        let lastData=await Webapi.postAjax("https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting",testObj);
-        context.sendActivity(lastData.Error.ErrorMessage+"5454")
-        // let testRes=await axios.get( { responseType: 'json' ,headers:{authorization:'Bearer 01427aa4-396e-44b7-82ab-84d802099bb0'},params:testObj});
-        
-        // console.log(testRes)
         const url = attachment.contentUrl;
         const conversationReference = TurnContext.getConversationReference(context.activity);
         let conversationReferences={};
         conversationReferences[conversationReference.conversation.id] = conversationReference;
         // Local file path for the bot to save the attachment.
         const localFileName = path.join(__dirname, attachment.name);
-        let test=async()=>{
-            for (const conversationReference of Object.values(conversationReferences)) {
-                await adapter.continueConversation(conversationReference, async turnContext => {
-                    await turnContext.sendActivity("test");
-                });
-            }
-        }
         let send=(uploadRes)=>{
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
@@ -127,64 +105,6 @@ class AttachmentsBot extends ActivityHandler {
                 }
             })
 
-        }
-        let s3Convert=async(res,_bucket,attachment,s3Name)=>{
-            for (const conversationReference of Object.values(conversationReferences)) {
-                await adapter.continueConversation(conversationReference, async turnContext => {
-                    await turnContext.sendActivity(Webapi.returnText());
-                });
-            }
-            var url="https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting";
-            let data={Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}
-            request({
-                url: url,
-                method: "POST",
-                rejectUnauthorized: false,
-                json: true,
-                headers: {
-                    "content-type": "application/json",
-                    "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
-                },
-                body: data
-            }, function(error, response, body) {
-                // resolve(response.statusCode)
-                // if (!error&&response.statusCode == 200) {
-                //     resolve(body.Data.Token)
-                // }else if(error||response.statusCode){
-                //     resolve("错误")
-                // }
-            }); 
-            return
-            await Webapi.startConverting().then(async(code)=>{
-                for (const conversationReference of Object.values(conversationReferences)) {
-                    await adapter.continueConversation(conversationReference, async turnContext => {
-                        await turnContext.sendActivity("开始转换3333");
-                    });
-                }
-                function S3setTime(specifiedKey){
-                    Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                        if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                             Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
-                                if(uploadRes){
-                                    send(uploadRes)
-                                }
-                             }).catch(function (error) {
-                                console.log(error);
-                              })
-                        }else if(cresult&&cresult.Data.CurrentStatus==3){
-                            return cresult
-                        }else if(cresult){
-                            setTimeout( ()=>{
-                                setTime(specifiedKey)
-                            },2000)
-                        }
-                    }).catch((error)=>{
-
-                    })
-
-                }
-                S3setTime({Key:s3Name,Bucket:_bucket})
-            })
         }
         try {
             // arraybuffer is necessary for images
@@ -260,33 +180,32 @@ class AttachmentsBot extends ActivityHandler {
                                 context.sendActivity("reg"+_bucket.RegionName)
                                 context.sendActivity("buc"+_bucket.BucketName)
                                 context.sendActivity("path"+res.RetData.Path)
-                                s3Convert(res,_bucket,attachment,s3Name)
-                                // Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
-                                //     context.sendActivity(code)
-                                //     function S3setTime(specifiedKey){
-                                //         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                                //             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                //                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
-                                //                     if(uploadRes){
-                                //                         send(uploadRes)
-                                //                     }
-                                //                  }).catch(function (error) {
-                                //                     console.log(error);
-                                //                   })
-                                //             }else if(cresult&&cresult.Data.CurrentStatus==3){
-                                //                 return cresult
-                                //             }else if(cresult){
-                                //                 setTimeout( ()=>{
-                                //                     setTime(specifiedKey)
-                                //                 },2000)
-                                //             }
-                                //         }).catch((error)=>{
+                                Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
+                                    context.sendActivity(code)
+                                    function S3setTime(specifiedKey){
+                                        Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
+                                            if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
+                                                 Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                                    if(uploadRes){
+                                                        send(uploadRes)
+                                                    }
+                                                 }).catch(function (error) {
+                                                    console.log(error);
+                                                  })
+                                            }else if(cresult&&cresult.Data.CurrentStatus==3){
+                                                return cresult
+                                            }else if(cresult){
+                                                setTimeout( ()=>{
+                                                    setTime(specifiedKey)
+                                                },2000)
+                                            }
+                                        }).catch((error)=>{
             
-                                //         })
+                                        })
             
-                                //     }
-                                //     S3setTime({Key:s3Name,Bucket:_bucket})
-                                // })
+                                    }
+                                    S3setTime({Key:s3Name,Bucket:_bucket})
+                                })
     
                                 context.sendActivity("Successfully")
     
