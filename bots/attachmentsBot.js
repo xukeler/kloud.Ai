@@ -41,9 +41,9 @@ class AttachmentsBot extends ActivityHandler {
      */
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
-        if(!token) return
+        // if(!token) return
         turnContext.sendActivity("token"+token)
-        await Webapi.setToken(token)
+        await Webapi.setToken("5df9c2da-fcbe-41d9-9799-98b2436bd5fb")
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
@@ -101,7 +101,7 @@ class AttachmentsBot extends ActivityHandler {
                     ];
                     const img=[
                         {
-                         url: Util.getcoverUrl(uploadRes.AttachmentUrl)
+                         url: uploadRes.AttachmentUrl?Util.getcoverUrl(uploadRes.AttachmentUrl):"https:www.xukeler.cn/logo.png",
                         }
                     ]
                     const card = CardFactory.heroCard('', img,
@@ -138,7 +138,7 @@ class AttachmentsBot extends ActivityHandler {
             context.sendActivity(res.RetCode+"1")
             console.log(res)
             if(res&&res.RetCode==0){
-                send({AttachmentID:res.RetData.AttachmentID,Title:res.RetData.Title})
+                send({AttachmentID:res.RetData.AttachmentID,Title:res.RetData.Title,AttachmentUrl:res.RetData.AttachmentUrl})
             }
             if(res&&res.RetCode==-6002){
                 let ossObj=await Webapi.getOssKey();

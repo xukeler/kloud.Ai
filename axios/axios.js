@@ -161,7 +161,7 @@ let Webapi={
     },
     async updateLesson(id){
         var url =  "Lesson/UpgradeToNormalLesson?lessonID="+id;
-        var result = await this.postAjax(url, obj);
+        var result = await this.postAjax(url);
         let res_Json=eval('(' + result + ')')
         if (!res_Json)
         {
