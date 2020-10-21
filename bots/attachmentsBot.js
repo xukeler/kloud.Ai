@@ -9,8 +9,6 @@ const {Util}=require("../axios/util");
 const { Webapi } = require('../axios/axios');
 const AWS=require("aws-sdk")
 var oss = require('ali-oss');
-const util = require('util');
-const setTimeoutPromise = util.promisify(setTimeout);
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword,
@@ -89,10 +87,8 @@ class AttachmentsBot extends ActivityHandler {
                 });
             }
         }
-        setTimeoutPromise(2000,"test").then((value)=>{
-            test(value)
-        })
         let send=(uploadRes)=>{
+            test("getId")
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
@@ -194,11 +190,16 @@ class AttachmentsBot extends ActivityHandler {
                                 context.sendActivity("path"+res.RetData.Path)
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
                                     function S3setTime(specifiedKey){
-                                        test("开始转换")
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                             test("开始转换"+cresult.Success)
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                                 test("转换成功")
+                                                test(attachment.name)
+                                                test(cresult.Data.Result.FileName)
+                                                test(res.RetData.FileID)
+                                                test(cresult.Data.Result.Count)
+                                                test(hash)
+                                                test(fileSize)
                                                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
                                                     if(uploadRes){
                                                         send(uploadRes)
