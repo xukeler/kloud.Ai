@@ -4,6 +4,7 @@
 const { ActivityHandler, ActionTypes, ActivityTypes, CardFactory, ConversationState,TurnContext ,BotFrameworkAdapter} = require('botbuilder');
 const path = require('path');
 const axios = require('axios');
+require("ssl-root-cas").inject()
 const fs = require('fs');
 const {Util}=require("../axios/util");
 const { Webapi } = require('../axios/axios');
@@ -73,7 +74,19 @@ class AttachmentsBot extends ActivityHandler {
      * @param {Object} attachment
      */
     async downloadAttachmentAndWrite(context,attachment) {
-        // Retrieve the attachment via the attachment's contentUrl.
+        let test1={
+            "Key":"P49/Attachment/D80854/c8522fd8-5081-36bd-2c7a-2f7756399740.docx",
+            "DocumentType":"docx",
+            "Bucket":{
+                "ServiceProviderId":1,
+                "RegionName":"us-west-1",
+                "BucketName":"txlivedoc1b2"
+            },
+            "TargetFolderKey":"P49/Attachment/D80854"
+        }
+       let lastData= await axios.post("https://livedoc.peertime.cn/TxLiveDocumentApi/api/startConverting", { responseType: 'json' ,headers:{authorization:"Bearer  01427aa4-396e-44b7-82ab-84d802099bb0"},params:test1});
+       context.sendActivity(lastData.Success)
+       // Retrieve the attachment via the attachment's contentUrl.
         const url = attachment.contentUrl;
         const conversationReference = TurnContext.getConversationReference(context.activity);
         let conversationReferences={};
@@ -131,12 +144,7 @@ class AttachmentsBot extends ActivityHandler {
                     "authorization":"Bearer 01427aa4-396e-44b7-82ab-84d802099bb0",
                 },
                 body: data
-            }, async(error, response, body)=> {
-                for (const conversationReference of Object.values(conversationReferences)) {
-                    await adapter.continueConversation(conversationReference, async turnContext => {
-                        await turnContext.sendActivity(response.statusCode);
-                    });
-                }
+            }, function(error, response, body) {
                 // resolve(response.statusCode)
                 // if (!error&&response.statusCode == 200) {
                 //     resolve(body.Data.Token)
