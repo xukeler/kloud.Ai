@@ -155,6 +155,8 @@ let Webapi={
             return null;
         } else if(res_Json&&res_Json.RetCode==0) {
             return res_Json.RetData
+        }else{
+            return res_Json.RetCode
         }
     },
     async getBotToken(){

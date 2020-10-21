@@ -42,7 +42,7 @@ class AttachmentsBot extends ActivityHandler {
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
         if(!token) return
-        turnContext.sendActivity(token)
+        turnContext.sendActivity("token"+token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
@@ -90,7 +90,8 @@ class AttachmentsBot extends ActivityHandler {
         let send=(uploadRes)=>{
             test("getId")
             test(uploadRes.AttachmentID+"")
-            test(uploadRes.Title+"")
+            const buf = Buffer.from(uploadRes.Title, 'utf8');
+            test(buf.toString('base64'))
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
@@ -112,6 +113,8 @@ class AttachmentsBot extends ActivityHandler {
                             await turnContext.sendActivity(reply);
                         });
                     }
+                }else{
+                    test(idObj)
                 }
             })
 
