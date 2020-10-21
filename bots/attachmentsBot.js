@@ -161,9 +161,10 @@ class AttachmentsBot extends ActivityHandler {
                         }},
                         httpOptions:{timeout:600000}
                       });
+                      var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                       var params = {
-                        Bucket: convertParam.BucketName,
-                        Key: attachment.name,
+                        Bucket: s3.config.params.Bucket,
+                        Key: s3Name,
                         Body: response.data
                       };
                       try{
@@ -173,7 +174,6 @@ class AttachmentsBot extends ActivityHandler {
                             } else {
                                 console.log("Successfully uploaded data to myBucket/myKey");
                                 context.sendActivity("Successfully uploaded data to myBucket/myKey")
-                                var s3Name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                                 var S3type=Util.GetCovertType(attachment.name);
                                 context.sendActivity("key"+s3Name)
                                 context.sendActivity(S3type)
