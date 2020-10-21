@@ -12,7 +12,7 @@ const Util={
     async checkSkypeTeam(text,id){
         let res;
         if(text){
-            res= await Webapi.getSkypeToken(encodeURIComponent("29:1vpKz7N8WAy1eEwj7jWwP9lFnwXmecxTTleaf504I2gg"));
+            res= await Webapi.getSkypeToken(encodeURIComponent(id));
         }else{
             res= await Webapi.getTeamsToken(encodeURIComponent(id));
         }
