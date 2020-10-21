@@ -43,7 +43,7 @@ class AttachmentsBot extends ActivityHandler {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
         // if(!token) return
         turnContext.sendActivity("token"+token)
-        await Webapi.setToken("5df9c2da-fcbe-41d9-9799-98b2436bd5fb")
+        await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
@@ -101,17 +101,10 @@ class AttachmentsBot extends ActivityHandler {
                     ];
                     let imgUrl=uploadRes.AttachmentUrl?Util.getcoverUrl(uploadRes.AttachmentUrl):"https:www.xukeler.cn/logo.png";
                     test(imgUrl)
-                    const img=[
-                        {
-                         url: imgUrl,
-                        }
-                    ]
-                    const card = CardFactory.heroCard('', img,
-                        buttons);
-            
+                    const img=[{url: imgUrl,}]
+                    const card = CardFactory.heroCard('',"ererer",buttons); 
                     reply.attachments = [card];
 
-                    test(reply)
                     test(reply)
                     // for (const conversationReference of Object.values(conversationReferences)) {
                     //     await adapter.continueConversation(conversationReference, async turnContext => {
