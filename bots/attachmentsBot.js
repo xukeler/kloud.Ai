@@ -99,20 +99,25 @@ class AttachmentsBot extends ActivityHandler {
                     const buttons = [
                         { type: ActionTypes.OpenUrl, title: 'start meeting ', value: meetingUrl },
                     ];
+                    let imgUrl=uploadRes.AttachmentUrl?Util.getcoverUrl(uploadRes.AttachmentUrl):"https:www.xukeler.cn/logo.png";
+                    test(imgUrl)
                     const img=[
                         {
-                         url: uploadRes.AttachmentUrl?Util.getcoverUrl(uploadRes.AttachmentUrl):"https:www.xukeler.cn/logo.png",
+                         url: imgUrl,
                         }
                     ]
                     const card = CardFactory.heroCard('', img,
                         buttons);
             
                     reply.attachments = [card];
-                    for (const conversationReference of Object.values(conversationReferences)) {
-                        await adapter.continueConversation(conversationReference, async turnContext => {
-                            await turnContext.sendActivity(reply);
-                        });
-                    }
+
+                    test(reply)
+                    test(reply)
+                    // for (const conversationReference of Object.values(conversationReferences)) {
+                    //     await adapter.continueConversation(conversationReference, async turnContext => {
+                    //         await turnContext.sendActivity(reply);
+                    //     });
+                    // }
                 }else{
                     test(idObj)
                 }
