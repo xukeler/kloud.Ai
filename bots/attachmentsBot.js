@@ -191,6 +191,7 @@ class AttachmentsBot extends ActivityHandler {
                                     function S3setTime(specifiedKey){
                                         test("开始转换")
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
+                                            test("开始转换"+cresult.Success)
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                                  Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
                                                     if(uploadRes){
