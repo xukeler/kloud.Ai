@@ -162,7 +162,7 @@ class AttachmentsBot extends ActivityHandler {
                         httpOptions:{timeout:600000}
                       });
                       var params = {
-                        Bucket: s3.config.params.Bucket,
+                        Bucket: convertParam.BucketName,
                         Key: attachment.name,
                         Body: response.data
                       };
@@ -181,7 +181,6 @@ class AttachmentsBot extends ActivityHandler {
                                 context.sendActivity("buc"+_bucket.BucketName)
                                 context.sendActivity("path"+res.RetData.Path)
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
-                                    context.sendActivity(code)
                                     function S3setTime(specifiedKey){
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
