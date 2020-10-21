@@ -41,9 +41,9 @@ class AttachmentsBot extends ActivityHandler {
      */
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
-        if(!token) return
+        // if(!token) return
         turnContext.sendActivity("token"+token)
-        await Webapi.setToken(token)
+        await Webapi.setToken("44b2546c-49c0-426d-b0f2-27f7f6d69c85")
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
         turnContext.sendActivity(turnContext.activity.attachments[0].contentUrl)
@@ -88,10 +88,7 @@ class AttachmentsBot extends ActivityHandler {
             }
         }
         let send=(uploadRes)=>{
-            test("getId")
             test(uploadRes.AttachmentID+"")
-            const buf = Buffer.from(uploadRes.Title, 'utf8');
-            test(buf.toString('base64'))
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                    let flag= await Webapi.updateLesson(idObj.LessonID);
@@ -138,8 +135,9 @@ class AttachmentsBot extends ActivityHandler {
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
             context.sendActivity(res.RetCode+"1")
+            console.log(res)
             if(res&&res.RetCode==0){
-                console.log(res)
+                send({AttachmentID:res.RetData.AttachmentID,Title:res.RetData.Title})
             }
             if(res&&res.RetCode==-6002){
                 let ossObj=await Webapi.getOssKey();
@@ -284,7 +282,10 @@ class AttachmentsBot extends ActivityHandler {
                       }
                   }
             }else if(res&&res.RetCode==-6003){
+                send({AttachmentID:res.RetData,Title:attachment.name})
                 return 1 //上传文件已经存在
+                
+                // RetData:
             }
         } catch (error) {
             context.sendActivity(error+"")
