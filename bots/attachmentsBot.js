@@ -92,7 +92,7 @@ class AttachmentsBot extends ActivityHandler {
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                    let flag= await Webapi.updateLesson(idObj.LessonID);
-                    test("Successfully created the Kloud document meeting link, please start your meeting")
+                    // test("Successfully created the Kloud document meeting link, please start your meeting")
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
                     const reply = { type: ActivityTypes.Message };
                     const buttons = [
