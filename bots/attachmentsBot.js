@@ -179,7 +179,7 @@ class AttachmentsBot extends ActivityHandler {
                       try{
                         s3.putObject(params,(perr, pres)=> {
                             if (perr) {
-                                console.log("Error uploading data: ", perr);
+                                context.sendActivity("upload error")
                             } else {
                                 console.log("Successfully uploaded data to myBucket/myKey");
                                 context.sendActivity("Successfully uploaded data to myBucket/myKey")
