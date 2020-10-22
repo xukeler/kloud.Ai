@@ -42,7 +42,7 @@ class AttachmentsBot extends ActivityHandler {
     async handleIncomingAttachment(turnContext) {
         let token =await Util.checkSkypeTeam(turnContext.activity.channelId,turnContext.activity.from.id);
         if(!token) return
-        turnContext.sendActivity("token"+token)
+        // turnContext.sendActivity("token"+token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
         turnContext.sendActivity("文件上传转换中...")
@@ -54,10 +54,10 @@ class AttachmentsBot extends ActivityHandler {
             if (localAttachmentData) {
                 // Because the TurnContext was bound to this function, the bot can call
                 // `TurnContext.sendActivity` via `this.sendActivity`;
-                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-                    `has been received and saved to "${ localAttachmentData.localPath }".`);
+                // await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+                //     `has been received and saved to "${ localAttachmentData.localPath }".`);
             } else {
-                await this.sendActivity('Attachment was not successfully saved to disk.');
+                // await this.sendActivity('Attachment was not successfully saved to disk.');
             }
         }
 
@@ -91,6 +91,7 @@ class AttachmentsBot extends ActivityHandler {
             const buf = Buffer.from(uploadRes.Title, 'utf8');
             test(buf.toString('base64'))
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
+                console.log(idObj)
                 if(idObj){
                    let flag= await Webapi.updateLesson(idObj.LessonID);
                    test(flag+"")
@@ -99,14 +100,7 @@ class AttachmentsBot extends ActivityHandler {
                     const buttons = [
                         { type: ActionTypes.OpenUrl, title: 'start meeting ', value: meetingUrl },
                     ];
-                    let imgUrl="";
-                    if(uploadRes.AttachmentUrl){
-                        imgUrl=Util.getcoverUrl(uploadRes.AttachmentUrl);
-                    }else{
-                        imgUrl="https://peertime-test.oss-cn-shanghai.aliyuncs.com/P49/Attachment/D80912/ed3c7e5d-8ce8-4fda-b002-9432f8dee6bb_1_4K.jpg"
-                    }
-                    test(imgUrl)
-                    const img=[{url:imgUrl}]
+                    const img=[{url:Util.getcoverUrl(uploadRes.AttachmentUrl)}]
                     const card = CardFactory.heroCard('', img,
                         buttons); 
                     reply.attachments = [card];
@@ -138,7 +132,6 @@ class AttachmentsBot extends ActivityHandler {
             let hash=Util.GetMD5(response.data) 
             let res=await Webapi.checkHash(attachment.name,hash);
             context.sendActivity(res.RetCode+"1")
-            console.log(res)
             if(res&&res.RetCode==0){
                 send({AttachmentID:res.RetData.AttachmentID,Title:res.RetData.Title,AttachmentUrl:res.RetData.AttachmentUrl})
             }
@@ -240,7 +233,6 @@ class AttachmentsBot extends ActivityHandler {
                             })
                       }catch(e){
                         context.sendActivity(e)
-                        console.log("失败",e);
                       }
                   }else{
                     var client  =new oss({
@@ -253,8 +245,7 @@ class AttachmentsBot extends ActivityHandler {
                     try {
                         var name=res.RetData.Path+"/"+Util.GUID()+""+attachment.name.substr(attachment.name.lastIndexOf("."));
                         // object-name可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
-                         await client.put(name,response.data);
-                        context.sendActivity(6)
+                        await client.put(name,response.data);
                         var type=Util.GetCovertType(attachment.name);
                         await Webapi.startConverting({Key:name,DocumentType:type,Bucket:_bucket,TargetFolderKey:res.RetData.Path})
                         function setTime(specifiedKey){
@@ -285,15 +276,11 @@ class AttachmentsBot extends ActivityHandler {
                       }
                   }
             }else if(res&&res.RetCode==-6003){
-                send({AttachmentID:res.RetData,Title:attachment.name})
-                return 1 //上传文件已经存在
-                
-                // RetData:
+                send({AttachmentID:res.RetData.AttachmentID,Title:attachment.name,AttachmentUrl:res.RetData.AttachmentUrl})
+                 //上传文件已经存在
             }
         } catch (error) {
             context.sendActivity(error+"")
-            console.error(error);
-            return 6004;
         }
         // If no error was thrown while writing to disk, return the attachment's name
         // and localFilePath for the response back to the user.
@@ -306,11 +293,6 @@ class AttachmentsBot extends ActivityHandler {
             fileName: attachment.name,
             localPath: localFileName
         };
-    }
-     async sendLiveDocCard(res,context){
-         console.log(999999)
-        console.log(res,context)
-
     }
     /**
      * Responds to user with either an attachment or a default message indicating

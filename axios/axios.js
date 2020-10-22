@@ -147,7 +147,7 @@ let Webapi={
     async getLiveId(id,title)
     {
         const buf = Buffer.from(title, 'utf8');
-        var url = "Lesson/AddTempLessonWithOriginalDocument?attachmentID=" + id+"&Title="+buf.toString('base64');
+        var url = "Lesson/AddTempLessonWithOriginalDocument?attachmentID=" + id+"&Title="+encodeURIComponent(buf.toString('base64'));
         var result = await this.postAjax(url);
         let res_Json=eval('(' + result + ')')
         if (!res_Json)
