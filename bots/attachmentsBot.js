@@ -92,7 +92,7 @@ class AttachmentsBot extends ActivityHandler {
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                    let flag= await Webapi.updateLesson(idObj.LessonID);
-                   test("Successfully created the Kloud document meeting link, please start your meeting")
+                    test("Successfully created the Kloud document meeting link, please start your meeting")
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
                     const reply = { type: ActivityTypes.Message };
                     const buttons = [
@@ -102,11 +102,7 @@ class AttachmentsBot extends ActivityHandler {
                     const card = CardFactory.heroCard('', img,
                         buttons); 
                     reply.attachments = [card];
-                    for (const conversationReference of Object.values(conversationReferences)) {
-                        await adapter.continueConversation(conversationReference, async turnContext => {
-                            await turnContext.sendActivity(reply);
-                        });
-                    }
+                    test(reply)
                 }else{
                     test(idObj)
                 }
@@ -120,7 +116,6 @@ class AttachmentsBot extends ActivityHandler {
             // context.sendActivity(botToken.access_token)
             const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:botToken.token_type+' '+botToken.access_token}});
             // context.sendActivity(response.config.url)
-            let  fileSize=parseInt(parseInt(response.headers['content-length']))
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
             // if (response.headers['content-type'] === 'application/json') {
             //     response.data = JSON.parse(response.data, (key, value) => {
@@ -245,7 +240,7 @@ class AttachmentsBot extends ActivityHandler {
                         function setTime(specifiedKey){
                             Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
                                 if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
-                                     Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,fileSize).then((uploadRes)=>{
+                                     Webapi.uploadNewFile(attachment.name,cresult.Data.Result.FileName,res.RetData.FileID,cresult.Data.Result.Count,hash,cresult.Data.Result.FileSize).then((uploadRes)=>{
                                         if(uploadRes){
                                             send(uploadRes)
                                         }
