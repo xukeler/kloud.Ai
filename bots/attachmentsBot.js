@@ -181,13 +181,13 @@ class AttachmentsBot extends ActivityHandler {
                             if (perr) {
                                 test("upload error")
                             } else {
-                                test("Successfully")
+                                // test("Successfully")
                                 var S3type=Util.GetCovertType(attachment.name);
-                                context.sendActivity("key"+s3Name)
-                                context.sendActivity(S3type)
-                                context.sendActivity("reg"+_bucket.RegionName)
-                                context.sendActivity("buc"+_bucket.BucketName)
-                                context.sendActivity("path"+res.RetData.Path)
+                                // context.sendActivity("key"+s3Name)
+                                // context.sendActivity(S3type)
+                                // context.sendActivity("reg"+_bucket.RegionName)
+                                // context.sendActivity("buc"+_bucket.BucketName)
+                                // context.sendActivity("path"+res.RetData.Path)
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
                                     function S3setTime(specifiedKey){
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
