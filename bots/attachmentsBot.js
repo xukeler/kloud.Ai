@@ -54,10 +54,10 @@ class AttachmentsBot extends ActivityHandler {
             if (localAttachmentData) {
                 // Because the TurnContext was bound to this function, the bot can call
                 // `TurnContext.sendActivity` via `this.sendActivity`;
-                // await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-                //     `has been received and saved to "${ localAttachmentData.localPath }".`);
+                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
+                    `has been received and saved to "${ localAttachmentData.localPath }".`);
             } else {
-                // await this.sendActivity('Attachment was not successfully saved to disk.');
+                await this.sendActivity('Attachment was not successfully saved to disk.');
             }
         }
 
@@ -179,7 +179,7 @@ class AttachmentsBot extends ActivityHandler {
                       try{
                         s3.putObject(params,(perr, pres)=> {
                             if (perr) {
-                                context.sendActivity("upload error")
+                                test("upload error")
                             } else {
                                 test("Successfully")
                                 var S3type=Util.GetCovertType(attachment.name);
