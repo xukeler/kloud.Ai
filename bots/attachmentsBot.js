@@ -45,7 +45,7 @@ class AttachmentsBot extends ActivityHandler {
         // turnContext.sendActivity("token"+token)
         await Webapi.setToken(token)
         // Prepare Promises to download each attachment and then execute each Promise.
-        turnContext.sendActivity("文件上传转换中...")
+        turnContext.sendActivity("Start uploading files to Kloud")
         const promises = turnContext.activity.attachments.map(this.downloadAttachmentAndWrite.bind(this,turnContext));
         const successfulSaves = await Promise.all(promises);
         // Replies back to the user with information about where the attachment is stored on the bot's server,
@@ -54,10 +54,9 @@ class AttachmentsBot extends ActivityHandler {
             if (localAttachmentData) {
                 // Because the TurnContext was bound to this function, the bot can call
                 // `TurnContext.sendActivity` via `this.sendActivity`;
-                await this.sendActivity(`Attachment "${ localAttachmentData.fileName }" ` +
-                    `has been received and saved to "${ localAttachmentData.localPath }".`);
+                await this.sendActivity("File uploaded to Kloud successfully");
             } else {
-                await this.sendActivity('Attachment was not successfully saved to disk.');
+                await this.sendActivity('File uploaded to Kloud error');
             }
         }
 
@@ -93,7 +92,7 @@ class AttachmentsBot extends ActivityHandler {
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
                 if(idObj){
                    let flag= await Webapi.updateLesson(idObj.LessonID);
-                   test(flag+"")
+                   test("Successfully created the Kloud document meeting link, please start your meeting")
                     let meetingUrl="https://testkloudsync.peertime.cn/live/"+idObj.LessonID
                     const reply = { type: ActivityTypes.Message };
                     const buttons = [
@@ -149,7 +148,7 @@ class AttachmentsBot extends ActivityHandler {
                     RegionName: convertParam.RegionName,
                     BucketName: convertParam.BucketName,
                 }
-                  context.sendActivity(convertParam.ServiceProviderId+"5")
+                //   context.sendActivity(convertParam.ServiceProviderId+"5")
                   if(convertParam.ServiceProviderId==1){
                     var s3 = new AWS.S3({
                         apiVersion: '2006-03-01',
@@ -223,10 +222,7 @@ class AttachmentsBot extends ActivityHandler {
             
                                     }
                                     S3setTime({Key:s3Name,Bucket:_bucket})
-                                })
-    
-                                context.sendActivity("Successfully")
-    
+                                })   
                             }
                             })
                       }catch(e){
