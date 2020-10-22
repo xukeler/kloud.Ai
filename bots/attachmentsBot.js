@@ -87,11 +87,10 @@ class AttachmentsBot extends ActivityHandler {
             }
         }
         let send=(uploadRes)=>{
-            test(uploadRes.AttachmentID+"")
-            const buf = Buffer.from(uploadRes.Title, 'utf8');
-            test(buf.toString('base64'))
+            // test(uploadRes.AttachmentID+"")
+            // const buf = Buffer.from(uploadRes.Title, 'utf8');
+            // test(buf.toString('base64'))
             Webapi.getLiveId(uploadRes.AttachmentID,uploadRes.Title).then(async(idObj)=>{
-                console.log(idObj)
                 if(idObj){
                    let flag= await Webapi.updateLesson(idObj.LessonID);
                    test(flag+"")
@@ -191,7 +190,7 @@ class AttachmentsBot extends ActivityHandler {
                                 Webapi.startConverting({Key:s3Name,DocumentType:S3type,Bucket:_bucket,TargetFolderKey:res.RetData.Path}).then((code)=>{
                                     function S3setTime(specifiedKey){
                                         Webapi.queryConvertPercentage(specifiedKey).then((cresult)=>{
-                                            test("开始转换"+cresult.Success)
+                                            // test("开始转换"+cresult.Success)
                                             if(cresult&&cresult.Success&&cresult.Data.CurrentStatus==5){
                                                 test("转换成功")
                                                 test(attachment.name)
@@ -212,9 +211,9 @@ class AttachmentsBot extends ActivityHandler {
                                                 test("装换失败"+cresult.Data.CurrentStatus)
                                                 return cresult
                                             }else if(cresult){
-                                                test("timeouteffff")
+                                                // test("timeouteffff")
                                                 setTimeout( ()=>{
-                                                    test("timeout")
+                                                    // test("timeout")
                                                     S3setTime(specifiedKey)
                                                 },2000)
                                             }
