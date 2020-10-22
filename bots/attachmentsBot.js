@@ -119,9 +119,9 @@ class AttachmentsBot extends ActivityHandler {
             // arraybuffer is necessary for images
             
             let botToken=await Webapi.getBotToken();
-            // context.sendActivity(botToken.access_token)
+            context.sendActivity(botToken.access_token)
             const response = await axios.get(url, { responseType: 'arraybuffer' ,headers:{Authorization:botToken.token_type+' '+botToken.access_token}});
-            // context.sendActivity(response.config.url)
+            context.sendActivity(response.config.url)
             let  fileSize=parseInt(parseInt(response.headers['content-length']))
             // If user uploads JSON file, this prevents it from being written as "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
             // if (response.headers['content-type'] === 'application/json') {
@@ -181,8 +181,7 @@ class AttachmentsBot extends ActivityHandler {
                             if (perr) {
                                 context.sendActivity("upload error")
                             } else {
-                                console.log("Successfully uploaded data to myBucket/myKey");
-                                context.sendActivity("Successfully uploaded data to myBucket/myKey")
+                                test("Successfully")
                                 var S3type=Util.GetCovertType(attachment.name);
                                 context.sendActivity("key"+s3Name)
                                 context.sendActivity(S3type)
